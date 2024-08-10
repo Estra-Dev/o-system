@@ -10,12 +10,12 @@ const Header = () => {
     <Navbar className=" border-b-2">
       <Link
         to={"/"}
-        className=" self-center whitespace-nowrap text-sm sm:text-xl font-sans font-semibold dark:text-white"
+        className=" self-center whitespace-nowrap text-sm sm:text-xl font-sans font-semibold dark:text-white flex items-center"
       >
-        <span className=" text-xltext-white px-2 sm:text-2xl border-[1px] rounded-full">
-          {"O'"}
-        </span>
-        SYSTEM
+        <Button outline gradientDuoTone={"purpleToBlue"} pill>
+          <p className=" text-xl sm:text-2xl">{"O'"}</p>
+        </Button>
+        system
       </Link>
       <form>
         <TextInput
@@ -34,7 +34,9 @@ const Header = () => {
           <FaRegMoon />
         </Button>
         <Link to="/sign-in">
-          <Button gradientDuoTone={"purpleToBlue"}>Sign In</Button>
+          <Button gradientDuoTone={"purpleToBlue"} outline>
+            Sign In
+          </Button>
         </Link>
         <Navbar.Toggle />
       </div>

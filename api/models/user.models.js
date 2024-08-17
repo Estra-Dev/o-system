@@ -18,6 +18,11 @@ const userSchema = Schema(
       unique: true,
       min: 2,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     password: {
       type: String,
       required: true,

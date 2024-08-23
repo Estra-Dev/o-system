@@ -7,7 +7,7 @@ const Header = () => {
   const path = useLocation().pathname;
 
   return (
-    <Navbar className=" border-b-2">
+    <Navbar className=" border-b-2 sticky top-0 left-0 z-50">
       <Link
         to={"/"}
         className=" self-center whitespace-nowrap text-sm sm:text-xl font-sans font-semibold dark:text-white flex items-center"

@@ -84,7 +84,7 @@ const FooterCom = () => {
           </Button>
         </Footer>
       ) : (
-        <div className="">
+        <div className=" sticky bottom-2 right-2 w-full flex justify-end">
           <Button
             onClick={() => setShowFooter(true)}
             className=" "

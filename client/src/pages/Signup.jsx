@@ -63,9 +63,9 @@ export const Signup = () => {
           </Link>
           <p className=" text-sm mt-5 italic font-thin">
             This is a platform where anyone can speak their mind(specically what
-            is right to be said) without been noticed or tracked. <br />
-            You can sign up with your email and password
+            is right to be said) without been noticed or tracked.
           </p>
+          <p className=" text-sm italic font-thin">Fill the form to sign up.</p>
         </div>
 
         {/* right */}

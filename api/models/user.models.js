@@ -28,6 +28,11 @@ const userSchema = Schema(
       required: true,
       min: 5,
     },
+    profilePicture: {
+      type: String,
+      default:
+        "https://th.bing.com/th/id/OIP.iFW8SCze8S0rADU4kyUUrgAAAA?w=360&h=360&rs=1&pid=ImgDetMain",
+    },
   },
   { timestamps: true }
 );

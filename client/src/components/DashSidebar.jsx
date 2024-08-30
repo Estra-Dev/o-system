@@ -17,7 +17,7 @@ const DashSidebar = () => {
   }, [location.search]);
 
   return (
-    <Sidebar className="w-full">
+    <Sidebar className="w-full md:w-[100px]">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <Link to={"/dashboard?tab=profile"}>

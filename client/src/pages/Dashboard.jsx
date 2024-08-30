@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   return (
     <div className=" min-h-screen flex ">
-      <div className=" w-[50px]">
+      <div className=" w-[50px] md:w-[100px]">
         {/* Sidebar */}
         <DashSidebar />
       </div>

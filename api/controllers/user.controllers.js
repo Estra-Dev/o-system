@@ -43,6 +43,7 @@ export const updateUser = async (req, res, next) => {
       return next(errorHandler(400, "Last Name can only contain Letters"));
     }
   }
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
@@ -61,6 +62,11 @@ export const updateUser = async (req, res, next) => {
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
   } catch (error) {
-    next(error);
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return next(errorHandler(400, "This user already exist"));
+    } else {
+      next(error);
+    }
   }
 };

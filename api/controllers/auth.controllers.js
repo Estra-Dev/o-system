@@ -21,17 +21,23 @@ export const signup = async (req, res, next) => {
     next(errorHandler(400, "All fields are required"));
   }
 
-  const hashedPassword = bcryptjs.hashSync(password, 10);
-
-  const newUser = new User({
-    firstname,
-    lastname,
-    anon_name,
-    email,
-    password: hashedPassword,
-  });
-
   try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return next(errorHandler(400, "User already exist"));
+    }
+
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+
+    const newUser = new User({
+      firstname,
+      lastname,
+      anon_name,
+      email,
+      password: hashedPassword,
+    });
+
     await newUser.save();
     res.json({ message: "Successfully registered" });
     console.log(newUser);

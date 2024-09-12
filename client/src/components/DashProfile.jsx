@@ -1,4 +1,11 @@
-import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
+import {
+  Alert,
+  Button,
+  Label,
+  Modal,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
 import { FaPen, FaTimes } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
@@ -15,8 +22,12 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteStart,
+  deleteSuccess,
+  deleteFailure,
 } from "../redux/user/userSlice";
 import axios from "axios";
+import { BsExclamationCircle } from "react-icons/bs";
 
 const DashProfile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -30,6 +41,7 @@ const DashProfile = () => {
   const dispatch = useDispatch();
   const [completedUpdate, setCompletedUpdate] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const filePicker = useRef();
 
@@ -108,6 +120,21 @@ const DashProfile = () => {
       }
     } catch (error) {
       dispatch(updateFailure(error.response.data.message));
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+
+    try {
+      dispatch(deleteStart());
+      const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      if (res.status === 200) {
+        dispatch(deleteSuccess(res.data));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(deleteFailure(error.response.data.message));
     }
   };
 
@@ -210,77 +237,123 @@ const DashProfile = () => {
           Edit Profile
           <FaPen className=" ml-3 w-4 h-4 text-xs cursor-pointer" />
         </Button>
-        <div className=" text-red-600 mt-5">Burn Account</div>
+        <div className=" text-red-600 mt-5">
+          <span onClick={() => setShowModal(true)} className=" cursor-pointer">
+            Burn Account
+          </span>
+        </div>
       </form>
-      <div
-        className={`${
-          showForm
-            ? "visible absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] max-w-lg p-5 rounded-md shadow-lg w-full z-50 bg-white border"
-            : "hidden"
-        }`}
+
+      {error && (
+        <Alert className=" mt-5" color={"failure"}>
+          {error}
+        </Alert>
+      )}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size={"md"}
       >
-        <p></p>
-        <form className=" relative flex flex-col gap-3" onSubmit={handleSubmit}>
-          <div className=" w-full flex justify-end">
-            <button
-              className=" outline-none"
-              onClick={() => setShowForm(false)}
-              type="button"
-            >
-              <FaTimes className=" text-red-600" />
-            </button>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <BsExclamationCircle className=" w-14 h-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className=" mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Burning this Account means the account will be completely deleted
+              from the {"o'system Database"}, Continue?
+            </h3>
+            <div className=" flex justify-center gap-4">
+              <Button onClick={handleDeleteUser} color={"failure"}>
+                Yes, Burn it
+              </Button>
+              <Button onClick={() => setShowModal(false)} color={"gray"}>
+                No, Keep it
+              </Button>
+            </div>
           </div>
-          <p className=" text-3xl font-semibold text-center pb-4">
-            Update Your Profile
-          </p>
-          <div className="">
-            <Label htmlFor="firstname">First Name</Label>
-            <TextInput
-              type="text"
-              placeholder="Your First Name"
-              name="firstname"
-              defaultValue={currentUser.firstname}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="">
-            <Label htmlFor="lastname">Last Name</Label>
-            <TextInput
-              type="text"
-              placeholder="Your Last Name"
-              name="lastname"
-              defaultValue={currentUser.lastname}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="">
-            <Label htmlFor="email">Email</Label>
-            <TextInput
-              type="email"
-              placeholder="name@company.com"
-              name="email"
-              defaultValue={currentUser.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="">
-            <Label htmlFor="password">Password</Label>
-            <TextInput
-              type="password"
-              placeholder="password"
-              name="password"
-              onChange={handleChange}
-            />
-          </div>
-          {error && <Alert color={"failure"}>{error}</Alert>}
-          {updateUserError && (
-            <Alert color={"failure"}>{updateUserError}</Alert>
-          )}
-          <Button type="submit" gradientDuoTone={"purpleToBlue"}>
-            Update Info
-          </Button>
-        </form>
-      </div>
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showForm}
+        onClose={() => setShowForm(false)}
+        popup
+        size={"md"}
+        // className={`${
+        //   showForm
+        //     ? "visible absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] max-w-lg p-5 rounded-md shadow-lg w-full z-50 bg-white border"
+        //     : "hidden"
+        // }`}
+      >
+        {/* <p></p> */}
+        <Modal.Header />
+        <Modal.Body>
+          <form
+            className=" relative flex flex-col gap-3"
+            onSubmit={handleSubmit}
+          >
+            {/* <div className=" w-full flex justify-end">
+              <button
+                className=" outline-none"
+                onClick={() => setShowForm(false)}
+                type="button"
+              >
+                <FaTimes className=" text-red-600" />
+              </button>
+            </div> */}
+            <p className=" text-3xl font-semibold text-center pb-4 mb-5 text-gray-500 dark:text-gray-400">
+              Update Your Profile
+            </p>
+            <div className="">
+              <Label htmlFor="firstname">First Name</Label>
+              <TextInput
+                type="text"
+                placeholder="Your First Name"
+                name="firstname"
+                defaultValue={currentUser.firstname}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="">
+              <Label htmlFor="lastname">Last Name</Label>
+              <TextInput
+                type="text"
+                placeholder="Your Last Name"
+                name="lastname"
+                defaultValue={currentUser.lastname}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="">
+              <Label htmlFor="email">Email</Label>
+              <TextInput
+                type="email"
+                placeholder="name@company.com"
+                name="email"
+                defaultValue={currentUser.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="">
+              <Label htmlFor="password">Password</Label>
+              <TextInput
+                type="password"
+                placeholder="password"
+                name="password"
+                onChange={handleChange}
+              />
+            </div>
+            {error && <Alert color={"failure"}>{error}</Alert>}
+            {updateUserError && (
+              <Alert color={"failure"}>{updateUserError}</Alert>
+            )}
+            <Button type="submit" gradientDuoTone={"purpleToBlue"}>
+              Update Info
+            </Button>
+          </form>
+        </Modal.Body>
+      </Modal>
       <div className=" flex-1"></div>
     </div>
   );

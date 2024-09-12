@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { FaInstagram } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa6";
 import { FaXTwitter } from "react-icons/fa6";
+import { RiMessage3Line } from "react-icons/ri";
+import { VscCollapseAll } from "react-icons/vsc";
 
 const FooterCom = () => {
   const [showFooter, setShowFooter] = useState(false);
@@ -80,11 +82,11 @@ const FooterCom = () => {
             pill
             outline
           >
-            {">>>"}
+            <VscCollapseAll />
           </Button>
         </Footer>
       ) : (
-        <div className=" sticky bottom-2 right-2 w-full flex justify-end">
+        <div className=" sticky bottom-6 pr-2 w-full flex justify-end">
           <Button
             onClick={() => setShowFooter(true)}
             className=" "
@@ -92,7 +94,7 @@ const FooterCom = () => {
             pill
             outline
           >
-            {"<>"}
+            <RiMessage3Line className=" w-5 h-5" />
           </Button>
         </div>
       )}

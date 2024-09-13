@@ -1,12 +1,37 @@
-import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Modal,
+  Navbar,
+  TextInput,
+} from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { LuSearchCode } from "react-icons/lu";
 import { FaRegMoon } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { signOutSuccess } from "../redux/user/userSlice";
+import axios from "axios";
 
 const Header = () => {
   const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      const res = await axios.post("/api/user/signout/");
+      if (res.status === 200) {
+        setShowModal(false);
+        dispatch(signOutSuccess());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Navbar className=" border-b-2 sticky top-0 left-0 z-50">
@@ -61,7 +86,9 @@ const Header = () => {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign Out</Dropdown.Item>
+            <Dropdown.Item onClick={() => setShowModal(true)}>
+              Sign Out
+            </Dropdown.Item>
           </Dropdown>
         )}
         <Navbar.Toggle />
@@ -74,6 +101,27 @@ const Header = () => {
           <Link to={"/about"}>ABOUT</Link>
         </Navbar.Link>
       </Navbar.Collapse>
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size={"md"}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <p className=" text-2xl text-gray-700 text-center">
+            Are You sure You want to Sign out?
+          </p>
+          <div className=" flex justify-center gap-4 mt-5">
+            <Button color={"failure"} outline onClick={handleSignOut}>
+              Yes, Sign Out
+            </Button>
+            <Button color={"gray"} onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Navbar>
   );
 };

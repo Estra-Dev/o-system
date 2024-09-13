@@ -33,6 +33,10 @@ const userSchema = Schema(
       default:
         "https://th.bing.com/th/id/OIP.iFW8SCze8S0rADU4kyUUrgAAAA?w=360&h=360&rs=1&pid=ImgDetMain",
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -7,6 +7,10 @@ import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
 import FooterCom from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
+import CreateSystem from "./pages/CreateSystem";
+import FollowSystem from "./pages/FollowSystem";
+import JoinSystem from "./pages/JoinSystem";
+import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 
 const App = () => {
   return (
@@ -17,6 +21,11 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-system" element={<CreateSystem />} />
+          <Route path="/follow-system" element={<FollowSystem />} />
+        </Route>
+        <Route element={<OnlyAdminPrivateRoute />}>
+          <Route path="/join-system" element={<JoinSystem />} />
         </Route>
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/sign-up" element={<Signup />} />

@@ -1,11 +1,78 @@
-import { Button, FileInput, Label, Select, TextInput } from "flowbite-react";
-import { useRef } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import {
+  Alert,
+  Button,
+  FileInput,
+  Label,
+  Select,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
+import { useRef, useState } from "react";
+import { app } from "../firebase";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const CreateSystem = () => {
   const filePicker = useRef();
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [chooseImage, setChooseImage] = useState("Choose an Image");
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
 
   const handleLogoChange = (ev) => {
-    console.log(ev.target.files[0]);
+    const file = ev.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImageUploadError(null);
+      setChooseImage(file.name);
+    }
+  };
+  console.log(imageFile);
+
+  const handleUploadImage = async () => {
+    try {
+      if (!imageFile) {
+        setImageUploadError("Please Select an Image for Your LOGO");
+        return;
+      }
+      setImageUploadError(null);
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + imageFile.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setImageUploadProgress(progress.toFixed(0));
+        },
+        (error) => {
+          setImageUploadError("Encountered an error trying to upload Image");
+          setImageUploadProgress(null);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+            setImageUploadProgress(null);
+            setImageUploadError(null);
+            setFormData({ ...formData, logo: downloadUrl });
+            setImageFileUrl(downloadUrl);
+          });
+        }
+      );
+    } catch (error) {
+      setImageUploadError("Image upload Error");
+      setImageUploadProgress(null);
+      console.log(error);
+    }
   };
 
   return (
@@ -51,10 +118,10 @@ const CreateSystem = () => {
         </div>
         <div className=" flex items-center justify-between gap-4">
           <p
-            className=" font-bold text-lg text-white rounded-lg p-2 bg-gray-700 cursor-pointer"
+            className=" font-bold text-sm text-white rounded-lg p-2 bg-gray-700 cursor-pointer truncate"
             onClick={() => filePicker.current.click()}
           >
-            CHOOSE LOGO HERE
+            {chooseImage}
           </p>
           <FileInput
             className=" hidden"
@@ -63,15 +130,45 @@ const CreateSystem = () => {
             ref={filePicker}
             onChange={handleLogoChange}
           />
-          <Button type="button" outline>
-            Upload
+          <Button
+            type="button"
+            outline
+            onClick={handleUploadImage}
+            size={"sm"}
+            disabled={imageUploadProgress}
+          >
+            {imageUploadProgress ? (
+              <>
+                <Spinner />
+                <span className=" ml-2">Uploading...</span>
+              </>
+            ) : (
+              "Upload"
+            )}
           </Button>
         </div>
-        <div className=" w-[50%] mt-7 mx-auto overflow-hidden rounded-full border border-teal-500 p-2">
-          <img
-            src="http://ts1.mm.bing.net/th?id=OIP.z1qiTo8DMqQhhAtW7NfLsQHaHa&pid=15.1"
-            alt="logo"
-          />
+        {imageUploadError && (
+          <Alert color={"failure"}>{imageUploadError}</Alert>
+        )}
+        <div className=" w-[170px] h-[170px] mt-7 mx-auto overflow-hidden rounded-full border border-teal-500 p-2">
+          {imageUploadProgress ? (
+            <div className=" w-full h-full">
+              <CircularProgressbar
+                value={imageUploadProgress}
+                text={`${imageUploadProgress || 0}%`}
+              />
+            </div>
+          ) : (
+            <img
+              className=" rounded-full object-cover w-full h-full"
+              src={
+                imageFileUrl ||
+                formData.logo ||
+                `http://ts1.mm.bing.net/th?id=OIP.z1qiTo8DMqQhhAtW7NfLsQHaHa&pid=15.1`
+              }
+              alt="logo"
+            />
+          )}
         </div>
         <Button
           type="submit"

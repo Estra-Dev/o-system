@@ -2,6 +2,13 @@ import System from "../models/system.models.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createSystem = async (req, res, next) => {
+  const { name } = req.body;
+  const systemExist = await System.findOne({ name });
+
+  if (systemExist) {
+    return next(errorHandler(400, "This System name has already been taken!"));
+  }
+
   if (!req.body.name || !req.body.description) {
     return next(errorHandler(403, "Please Provide all required field"));
   }
@@ -21,7 +28,9 @@ export const createSystem = async (req, res, next) => {
   try {
     const createdSystem = await newSystem.save();
     res.status(201).json(createdSystem);
+    console.log(newSystem);
   } catch (error) {
     next(error);
+    console.log(error);
   }
 };

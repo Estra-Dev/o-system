@@ -17,6 +17,8 @@ import { useRef, useState } from "react";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreateSystem = () => {
   const filePicker = useRef();
@@ -26,6 +28,8 @@ const CreateSystem = () => {
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
+  const [createSystemError, setCreateSystemError] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogoChange = (ev) => {
     const file = ev.target.files[0];
@@ -75,12 +79,37 @@ const CreateSystem = () => {
     }
   };
 
+  const handleChange = (ev) => {
+    const { name, value } = ev.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  console.log(formData);
+
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+    setCreateSystemError(null);
+    try {
+      const res = await axios.post(`/api/system/createsystem`, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = res.data;
+      if (res.status === 201) {
+        setCreateSystemError(null);
+        navigate(`/system/${data.slug}`);
+        console.log(data);
+      }
+    } catch (error) {
+      setCreateSystemError(error.response.data.message);
+      console.log(error);
+    }
+  };
+
   return (
     <div className=" max-w-3xl mx-auto min-h-screen p-3">
       <h1 className=" text-center text-3xl font-semibold my-7 text-gray-900">
         Create Your System
       </h1>
-      <form className=" flex flex-col gap-4">
+      <form className=" flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className=" flex flex-col gap-4 sm:flex-row sm:justify-between">
           <div className=" flex flex-col gap-2 flex-1">
             <Label htmlFor="name">System Name</Label>
@@ -89,11 +118,16 @@ const CreateSystem = () => {
               name="name"
               placeholder="E.g: O'system"
               required
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="category">Category</Label>
-            <Select>
+            <Select
+              onChange={handleChange}
+              value={formData.category}
+              name="category"
+            >
               <option value={"uncategorize"}>Select a category</option>
               <option value={"politics"}>Politics</option>
               <option value={"economy"}>Economy</option>
@@ -114,6 +148,7 @@ const CreateSystem = () => {
             name="description"
             placeholder="E.g: This is a system for all..."
             required
+            onChange={handleChange}
           />
         </div>
         <div className=" flex items-center justify-between gap-4">
@@ -177,6 +212,11 @@ const CreateSystem = () => {
         >
           Create System
         </Button>
+        {createSystemError && (
+          <Alert color={"failure"} className=" my-5">
+            {createSystemError}
+          </Alert>
+        )}
       </form>
     </div>
   );

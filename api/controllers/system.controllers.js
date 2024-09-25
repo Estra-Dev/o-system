@@ -34,3 +34,20 @@ export const createSystem = async (req, res, next) => {
     console.log(error);
   }
 };
+
+export const getSystem = async (req, res, next) => {
+  try {
+    const slug = req.params.systemslug;
+    const system = await System.findOne({ slug });
+
+    console.log(system, slug);
+    console.log(req.params);
+
+    if (!system) {
+      return next(errorHandler(404, "System not found!"));
+    }
+    res.status(200).json(system);
+  } catch (error) {
+    next(error);
+  }
+};

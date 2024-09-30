@@ -19,8 +19,16 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  createStart,
+  createSuccess,
+  createError,
+} from "../redux/system/systemSlice";
 
 const CreateSystem = () => {
+  const dispatch = useDispatch();
+  const { error, loading } = useSelector((state) => state.system);
   const filePicker = useRef();
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
@@ -60,8 +68,8 @@ const CreateSystem = () => {
           setImageUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          setImageUploadError("Encountered an error trying to upload Image");
           setImageUploadProgress(null);
+          setImageUploadError("Encountered an error trying to upload Image");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
@@ -87,19 +95,19 @@ const CreateSystem = () => {
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
-    setCreateSystemError(null);
+    dispatch(createStart());
     try {
       const res = await axios.post(`/api/system/createsystem`, formData, {
         headers: { "Content-Type": "application/json" },
       });
       const data = res.data;
       if (res.status === 201) {
-        setCreateSystemError(null);
-        navigate(`/system/${data.slug}`);
+        dispatch(createSuccess(data));
+        navigate(`/system/${data.slug}?tab=matters`);
         console.log(data);
       }
     } catch (error) {
-      setCreateSystemError(error.response.data.message);
+      dispatch(createError(error.response.data.message));
       console.log(error);
     }
   };
@@ -209,12 +217,20 @@ const CreateSystem = () => {
           type="submit"
           className=" w-[300px] mt-4 mx-auto"
           gradientDuoTone={"purpleToBlue"}
+          disabled={loading}
         >
-          Create System
+          {loading ? (
+            <>
+              <Spinner />
+              <span>Creating Your System...</span>
+            </>
+          ) : (
+            "Create System"
+          )}
         </Button>
-        {createSystemError && (
+        {error && (
           <Alert color={"failure"} className=" my-5">
-            {createSystemError}
+            {error}
           </Alert>
         )}
       </form>

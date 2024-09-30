@@ -1,6 +1,6 @@
 const Post = () => {
   return (
-    <div className=" shadow-lg mb-6 p-5 rounded-sm">
+    <div className=" shadow-lg mb-3 p-5 rounded-md bg-white">
       <div className="first flex justify-start gap-2 whitespace-nowrap text-xs sm:text-sm w-full">
         <div className=" w-[7%] rounded-full overflow-hidden">
           <img

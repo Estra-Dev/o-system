@@ -4,11 +4,13 @@ import { Link, useParams } from "react-router-dom";
 import { PiNewspaperBold } from "react-icons/pi";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const SystemSidebar = () => {
   const params = useParams();
   // console.log(params.slug);
   const [systemDetails, setSystemDetails] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const getSystem = async () => {
     try {
@@ -27,6 +29,13 @@ const SystemSidebar = () => {
   useEffect(() => {
     getSystem();
   }, []);
+  if (systemDetails) {
+    if (systemDetails.admin.includes(currentUser._id)) {
+      console.log("You are an Admin");
+    } else {
+      console.log("not an admin");
+    }
+  }
   return (
     <Sidebar className=" w-full md:w-[100px] sticky">
       <Sidebar.Items>
@@ -45,8 +54,13 @@ const SystemSidebar = () => {
           <Link to={"/dashboard?tab=profile"}>
             <Sidebar.Item as="div">
               <div className=" flex flex-col justify-center items-center text-xs font-semibold">
-                <FaRegUserCircle className=" w-7 h-7" />
-                <span>User</span>
+                <FaRegUserCircle className=" w-7 h-7 mb-1" />
+                <span>
+                  {systemDetails &&
+                  systemDetails.admin.includes(currentUser._id)
+                    ? "Admin"
+                    : "Member"}
+                </span>
               </div>
             </Sidebar.Item>
           </Link>
@@ -54,7 +68,7 @@ const SystemSidebar = () => {
             <Link to={`/system/${systemDetails.slug}?tab=matters`}>
               <Sidebar.Item as="div">
                 <div className=" flex flex-col justify-center items-center text-xs font-semibold">
-                  <PiNewspaperBold className=" w-7 h-7" />
+                  <PiNewspaperBold className=" w-7 h-7 mb-1" />
                   <span>Matters</span>
                 </div>
               </Sidebar.Item>

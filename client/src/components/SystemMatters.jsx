@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -7,20 +7,87 @@ import {
   getSystemSuccess,
   getSystemFailure,
 } from "../redux/system/systemSlice";
-import { Button } from "flowbite-react";
+import { Button, FileInput, Modal, TextInput } from "flowbite-react";
 import { PiStarLight } from "react-icons/pi";
+import { IoMdImages } from "react-icons/io";
 import Post from "./Post";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 // import { useSelector } from "react-redux";
 
 const SystemMatters = () => {
+  const [openPost, setOpenPost] = useState(false);
+  const filePicker = useRef();
+  const [chooseImage, setChooseImage] = useState("Upload Image");
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [imageFileUrl, setImageFileUrl] = useState(null);
   const params = useParams();
   // console.log(params.slug);
   // const [systemDetails, setSystemDetails] = useState(null);
   const dispatch = useDispatch();
   const { systemDetails } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // const { currentUser } = useSelector((state) => state.user);
+
+  const handleLogoChange = (ev) => {
+    const file = ev.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImageUploadError(null);
+      setChooseImage(file.name);
+    }
+  };
+
+  console.log(imageFile);
+
+  const handleUploadImage = async () => {
+    try {
+      if (!imageFile) {
+        setImageUploadError("Please Select an Image for Your LOGO");
+        return;
+      }
+      setImageUploadError(null);
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + imageFile.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setImageUploadProgress(progress.toFixed(0));
+        },
+        (error) => {
+          setImageUploadProgress(null);
+          setImageUploadError("Encountered an error trying to upload Image");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+            setImageUploadProgress(null);
+            setImageUploadError(null);
+            setFormData({ ...formData, image: downloadUrl });
+            setImageFileUrl(downloadUrl);
+          });
+        }
+      );
+    } catch (error) {
+      setImageUploadError("Image upload Error");
+      setImageUploadProgress(null);
+      console.log(error);
+    }
+  };
 
   const getSystem = async () => {
     try {
@@ -53,7 +120,7 @@ const SystemMatters = () => {
   // }
 
   return (
-    <div className=" flex md:justify-center gap-5 p-1 bg-gray-50 w-full">
+    <div className=" flex md:justify-center gap-5 p-1 bg-gray-50 w-full relative">
       <div className=" w-full flex-1 flex flex-col gap-1">
         <div className=" flex justify-between items-center head-system py-3 pr-2 bg-white rounded-md shadow-md">
           <div className=" pl-[5%]">
@@ -79,6 +146,23 @@ const SystemMatters = () => {
           )}
         </div>
         <div className="all-matters">
+          <div className="publish w-full text-xs md:text-sm font-semibold p-3 bg-white">
+            {systemDetails.members.includes(currentUser._id) ? (
+              <Button
+                disabled={openPost}
+                onClick={() => setOpenPost(true)}
+                outline
+                gradientDuoTone={"purpleToBlue"}
+              >
+                Speak your mind, but mind what you Speak...
+              </Button>
+            ) : (
+              <p className=" italic text-xs font-semibold py-5">
+                You are not allowed to speak here, become a member...
+              </p>
+            )}
+            {/* <TextInput  /> */}
+          </div>
           <Post />
           <Post />
           <Post />
@@ -90,6 +174,54 @@ const SystemMatters = () => {
       {/* {systemDetails.members.includes(currentUser._id)
         ? "Member"
         : "Non Member"} */}
+      <Modal
+        popup
+        size={"sm"}
+        onClose={() => setOpenPost(false)}
+        show={openPost}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <form>
+            <div className="">
+              <p
+                title={chooseImage}
+                className=" font-bold text-sm text-orange-500 rounded-lg p-2 cursor-pointer truncate"
+                onClick={() => filePicker.current.click()}
+              >
+                <IoMdImages className=" w-10 h-10" />
+                {chooseImage && (
+                  <p className=" truncate">You Chose {chooseImage}</p>
+                )}
+              </p>
+              <FileInput
+                className=" hidden"
+                type="file"
+                accept="image/*"
+                ref={filePicker}
+                onChange={handleLogoChange}
+              />
+            </div>
+            <div>
+              <ReactQuill
+                theme="snow"
+                placeholder="Say something courageeously and rightly..."
+                className=" h-72 mb-20"
+                required
+              />
+            </div>
+            <div className=" w-full">
+              <Button
+                type="submit"
+                gradientDuoTone={"purpleToBlue"}
+                className=" w-full"
+              >
+                Publish
+              </Button>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

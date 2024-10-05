@@ -36,7 +36,7 @@ const CreateSystem = () => {
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
-  const [createSystemError, setCreateSystemError] = useState(null);
+  // const [createSystemError, setCreateSystemError] = useState(null);
   const navigate = useNavigate();
 
   const handleLogoChange = (ev) => {

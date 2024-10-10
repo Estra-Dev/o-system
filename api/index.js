@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import systemRouter from "./routes/system.routes.js";
+import mattersRouter from "./routes/matters.routes.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.listen(PORT, () => {
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/system", systemRouter);
+app.use("/api/matter", mattersRouter);
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";

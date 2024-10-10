@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
   getSystemSuccess,
   getSystemFailure,
 } from "../redux/system/systemSlice";
-import { Button, FileInput, Modal, TextInput } from "flowbite-react";
+import { Alert, Button, FileInput, Modal } from "flowbite-react";
 import { PiStarLight } from "react-icons/pi";
 import { IoMdImages } from "react-icons/io";
 import Post from "./Post";
@@ -184,16 +184,30 @@ const SystemMatters = () => {
         <Modal.Body>
           <form>
             <div className="">
-              <p
-                title={chooseImage}
-                className=" font-bold text-sm text-orange-500 rounded-lg p-2 cursor-pointer truncate"
-                onClick={() => filePicker.current.click()}
-              >
-                <IoMdImages className=" w-10 h-10" />
-                {chooseImage && (
-                  <p className=" truncate">You Chose {chooseImage}</p>
-                )}
-              </p>
+              {chooseImage == "Upload Image" ? (
+                <div
+                  title={chooseImage}
+                  className=" font-bold text-sm text-orange-500 rounded-lg p-2 cursor-pointer truncate"
+                  onClick={() => filePicker.current.click()}
+                >
+                  <IoMdImages className=" w-10 h-10" />
+                  <span>Choose an Image</span>
+                </div>
+              ) : (
+                <div className=" flex justify-between items-center gap-3">
+                  <span className=" truncate">You Chose {chooseImage}</span>
+                  <Button
+                    type="button"
+                    onClick={handleUploadImage}
+                    size={"sm"}
+                    disabled={imageUploadProgress}
+                    outline
+                    gradientDuoTone={"purpleToBlue"}
+                  >
+                    Upload
+                  </Button>
+                </div>
+              )}
               <FileInput
                 className=" hidden"
                 type="file"
@@ -201,6 +215,21 @@ const SystemMatters = () => {
                 ref={filePicker}
                 onChange={handleLogoChange}
               />
+              {imageFileUrl && (
+                <div className=" overflow-hidden rounded-md w-full my-3">
+                  <img
+                    src={imageFileUrl}
+                    alt={imageFileUrl}
+                    className=" rounded-md w-full object-cover"
+                  />
+                  <p
+                    onClick={() => filePicker.current.click()}
+                    className=" font-bold text-sm text-orange-500 rounded-lg p-2 cursor-pointer border mt-2"
+                  >
+                    Choose another Image
+                  </p>
+                </div>
+              )}
             </div>
             <div>
               <ReactQuill
@@ -210,6 +239,9 @@ const SystemMatters = () => {
                 required
               />
             </div>
+            {imageUploadError && (
+              <Alert color={"failure"}>{imageUploadError}</Alert>
+            )}
             <div className=" w-full">
               <Button
                 type="submit"

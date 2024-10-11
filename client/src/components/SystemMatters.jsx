@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
@@ -31,12 +31,14 @@ const SystemMatters = () => {
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
   const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [publishError, setPublishError] = useState(null);
   const params = useParams();
   // console.log(params.slug);
   // const [systemDetails, setSystemDetails] = useState(null);
   const dispatch = useDispatch();
   const { systemDetails } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   // const navigate = useNavigate();
   // const { currentUser } = useSelector((state) => state.user);
 
@@ -105,6 +107,30 @@ const SystemMatters = () => {
   };
 
   console.log("System:", systemDetails);
+
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+    setPublishError(null);
+    try {
+      const res = await axios.post(
+        `/api/matter/creatematter/${systemDetails._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = res.data;
+      if (res.status === 201) {
+        console.log(data);
+        navigate(`/system/${systemDetails.slug}?tab=matters`);
+      }
+    } catch (error) {
+      console.log(error);
+      setPublishError(error.response.data.message);
+    }
+  };
 
   useEffect(() => {
     getSystem();
@@ -182,7 +208,7 @@ const SystemMatters = () => {
       >
         <Modal.Header />
         <Modal.Body>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="">
               {chooseImage == "Upload Image" ? (
                 <div
@@ -237,6 +263,9 @@ const SystemMatters = () => {
                 placeholder="Say something courageeously and rightly..."
                 className=" h-72 mb-20"
                 required
+                onChange={(value) => {
+                  setFormData({ ...formData, content: value });
+                }}
               />
             </div>
             {imageUploadError && (
@@ -251,6 +280,11 @@ const SystemMatters = () => {
                 Publish
               </Button>
             </div>
+            {publishError && (
+              <Alert color={"failure"} className=" mt-2">
+                {publishError}
+              </Alert>
+            )}
           </form>
         </Modal.Body>
       </Modal>

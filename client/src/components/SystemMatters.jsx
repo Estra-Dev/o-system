@@ -32,6 +32,7 @@ const SystemMatters = () => {
   const [formData, setFormData] = useState({});
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [publishError, setPublishError] = useState(null);
+  const [matters, setMatters] = useState(null);
   const params = useParams();
   // console.log(params.slug);
   // const [systemDetails, setSystemDetails] = useState(null);
@@ -124,11 +125,28 @@ const SystemMatters = () => {
       const data = res.data;
       if (res.status === 201) {
         console.log(data);
-        navigate(`/system/${systemDetails.slug}?tab=matters`);
+        setFormData(null);
+        setMatters(data);
+        if (matters) {
+          addMattersToMattersArr();
+        }
+        // navigate(`/system/${systemDetails.slug}?tab=matters`);
+        setOpenPost(false);
       }
     } catch (error) {
       console.log(error);
+      setFormData(null);
       setPublishError(error.response.data.message);
+    }
+  };
+
+  const addMattersToMattersArr = async () => {
+    try {
+      await axios.put(
+        `/api/system/addmatterstomattersarr/${systemDetails._id}/${matters._id}`
+      );
+    } catch (error) {
+      console.log(error);
     }
   };
 

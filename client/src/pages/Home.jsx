@@ -1,5 +1,5 @@
 import { Button } from "flowbite-react";
-import Post from "../components/Post";
+import Matter from "../components/Matter";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -32,9 +32,9 @@ const Home = () => {
             <h1 className=" text-3xl font-bold text-gray-900 my-7 px-5">
               Matters
             </h1>
-            <Post />
-            <Post />
-            <Post />
+            <Matter />
+            <Matter />
+            <Matter />
           </div>
         </div>
 

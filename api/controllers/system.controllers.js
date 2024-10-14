@@ -53,22 +53,24 @@ export const getSystem = async (req, res, next) => {
 };
 
 export const addMattersToMattersArr = async (req, res, next) => {
-  const system = await System.findOne({ _id: req.params.systemId });
+  // const system = await System.findOne({ _id: req.params.systemId });
   try {
-    const addAMatter = await System.findByIdAndUpdate(
-      req.params.systemId,
-      {
-        $push: {
-          matters: { $each: [req.params.matterId] },
+    if (req.params.matterId) {
+      const addAMatter = await System.findByIdAndUpdate(
+        req.params.systemId,
+        {
+          $push: {
+            matters: { $each: [req.params.matterId] },
+          },
+          // $set: {
+          //   numberOfMatters: system.matters.length,
+          // },
         },
-        $set: {
-          numberOfMatters: system.matters.length,
-        },
-      },
-      { new: true }
-    ).exec();
-    res.status(200).json(addAMatter);
-    console.log("matters", addAMatter);
+        { new: true }
+      ).exec();
+      res.status(200).json(addAMatter);
+      console.log("matters", addAMatter);
+    }
   } catch (error) {
     next(error);
   }

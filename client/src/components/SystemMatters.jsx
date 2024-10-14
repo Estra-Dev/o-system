@@ -10,7 +10,7 @@ import {
 import { Alert, Button, FileInput, Modal } from "flowbite-react";
 import { PiStarLight } from "react-icons/pi";
 import { IoMdImages } from "react-icons/io";
-import Post from "./Post";
+import Matter from "./Matter";
 import {
   getDownloadURL,
   getStorage,
@@ -207,9 +207,9 @@ const SystemMatters = () => {
             )}
             {/* <TextInput  /> */}
           </div>
-          <Post />
-          <Post />
-          <Post />
+          <Matter />
+          <Matter />
+          <Matter />
         </div>
       </div>
       <div className=" hidden md:block w-[35%] pl-4">

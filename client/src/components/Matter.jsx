@@ -1,4 +1,4 @@
-const Post = () => {
+const Matter = () => {
   return (
     <div className=" shadow-lg mb-3 p-5 rounded-md bg-white">
       <div className="first flex justify-start gap-2 whitespace-nowrap text-xs sm:text-sm w-full">
@@ -33,4 +33,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default Matter;

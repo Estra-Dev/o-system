@@ -45,14 +45,10 @@ const systemSchema = Schema(
       type: Number,
       default: 0,
     },
-    matters: {
-      type: Array,
-      default: [],
-    },
-    numberOfMatters: {
-      type: Number,
-      default: 0,
-    },
+    // matters: {
+    //   type: Array,
+    //   default: [],
+    // },
     category: {
       type: String,
       default: "uncategorize",

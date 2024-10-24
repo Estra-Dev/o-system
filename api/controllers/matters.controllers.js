@@ -1,11 +1,13 @@
 import Matter from "../models/matter.model.js";
 import System from "../models/system.models.js";
+import User from "../models/user.models.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createMatters = async (req, res, next) => {
   try {
     const system = await System.findById(req.params.systemId);
 
+    const member = await User.findById(req.user.id);
     if (!system.members.includes(req.user.id)) {
       return next(errorHandler(403, "You are not allowed to Publish a matter"));
     }
@@ -15,8 +17,10 @@ export const createMatters = async (req, res, next) => {
 
     const newMatter = new Matter({
       ...req.body,
-      userId: req.user.id,
+      userId: member._id,
       systemId: system._id,
+      system_name: system.name,
+      anon_name: member.anon_name,
     });
 
     const savedMatter = await newMatter.save();
@@ -39,7 +43,7 @@ export const getMatters = async (req, res, next) => {
         $or: [{ content: { $regex: req.query.searchTerm, $options: "i" } }],
       }),
     })
-      .sort({ updateAt: sortDirection })
+      .sort({ updatedAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
     console.log(matters);

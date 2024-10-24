@@ -20,7 +20,6 @@ import {
 import { app } from "../firebase";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-// import { useSelector } from "react-redux";
 
 const SystemMatters = () => {
   const [openPost, setOpenPost] = useState(false);
@@ -32,14 +31,13 @@ const SystemMatters = () => {
   const [formData, setFormData] = useState({});
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [publishError, setPublishError] = useState(null);
-  const [matters, setMatters] = useState(null);
+  const [systemMatters, setSystemMatters] = useState([]);
+  // const [matters, setMatters] = useState(null);
   const params = useParams();
   // console.log(params.slug);
-  // const [systemDetails, setSystemDetails] = useState(null);
   const dispatch = useDispatch();
   const { systemDetails } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
-  const navigate = useNavigate();
   // const navigate = useNavigate();
   // const { currentUser } = useSelector((state) => state.user);
 
@@ -126,12 +124,11 @@ const SystemMatters = () => {
       if (res.status === 201) {
         console.log(data);
         setFormData(null);
-        setMatters(data);
-        if (matters) {
-          addMattersToMattersArr();
-        }
-        // navigate(`/system/${systemDetails.slug}?tab=matters`);
         setOpenPost(false);
+        // if (matters) {
+        //   addMattersToMattersArr();
+        // }
+        // navigate(`/system/${systemDetails.slug}?tab=matters`);
       }
     } catch (error) {
       console.log(error);
@@ -140,18 +137,9 @@ const SystemMatters = () => {
     }
   };
 
-  const addMattersToMattersArr = async () => {
-    try {
-      await axios.put(
-        `/api/system/addmatterstomattersarr/${systemDetails._id}/${matters._id}`
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     getSystem();
+    getMatters();
   }, []);
 
   // if (systemDetails) {
@@ -162,12 +150,26 @@ const SystemMatters = () => {
   //     console.log("not an admin");
   //   }
   // }
+  console.log("sysId", systemDetails._id);
+  console.log("Post matters", systemMatters);
+  const getMatters = async () => {
+    try {
+      const res = await axios.get(
+        `/api/matter/getmatters?systemId=${systemDetails._id}`
+      );
+      if (res.status === 200) {
+        setSystemMatters(res.data.matters);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className=" flex md:justify-center gap-5 p-1 bg-gray-50 w-full relative">
-      <div className=" w-full flex-1 flex flex-col gap-1">
-        <div className=" flex justify-between items-center head-system py-3 pr-2 bg-white rounded-md shadow-md">
-          <div className=" pl-[5%]">
+    <div className=" flex md:justify-center gap-5 p-1 bg-gray-50 w-[85%] md:w-[1000px]">
+      <div className=" w-full flex flex-col gap-1">
+        <div className=" flex justify-between items-center head-system py-3 pr-2 bg-white rounded-md shadow-md w-full">
+          <div className=" pl-[2%]">
             <h1 className=" font-semibold text-3xl flex items-center gap-2 text-gray-700 truncate">
               {systemDetails.name}{" "}
               <span>
@@ -179,17 +181,19 @@ const SystemMatters = () => {
             </p>
           </div>
           {systemDetails && (
-            <>
+            <div>
               {systemDetails.admin.includes(currentUser._id) ||
               systemDetails.followers.includes(currentUser._id) ? (
-                <Button outline>Following</Button>
+                <Button outline size={"sm"}>
+                  Following
+                </Button>
               ) : (
                 <Button size={"sm"}>Follow</Button>
               )}
-            </>
+            </div>
           )}
         </div>
-        <div className="all-matters">
+        <div className="all-matters flex flex-col w-full">
           <div className="publish w-full text-xs md:text-sm font-semibold p-3 bg-white">
             {systemDetails.members.includes(currentUser._id) ? (
               <Button
@@ -207,14 +211,19 @@ const SystemMatters = () => {
             )}
             {/* <TextInput  /> */}
           </div>
-          <Matter />
-          <Matter />
-          <Matter />
+          <div className=" w-full">
+            {systemMatters &&
+              systemMatters.map((matter) => (
+                <Matter key={matter._id} matter={matter} />
+              ))}
+          </div>
+          {/* <Matter />
+          <Matter /> */}
         </div>
       </div>
-      <div className=" hidden md:block w-[35%] pl-4">
+      {/* <div className=" hidden md:block w-[35%] pl-4">
         <p>present</p>
-      </div>
+      </div> */}
       {/* {systemDetails.members.includes(currentUser._id)
         ? "Member"
         : "Non Member"} */}

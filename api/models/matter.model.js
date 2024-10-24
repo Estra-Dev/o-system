@@ -10,6 +10,14 @@ const matterSchema = new Schema(
       type: String,
       required: true,
     },
+    anon_name: {
+      type: String,
+      required: true,
+    },
+    system_name: {
+      type: String,
+      required: true,
+    },
     content: {
       type: String,
       required: true,

@@ -31,7 +31,7 @@ const SystemMatters = () => {
   const [formData, setFormData] = useState({});
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [publishError, setPublishError] = useState(null);
-  const [systemMatters, setSystemMatters] = useState([]);
+
   // const [matters, setMatters] = useState(null);
   const params = useParams();
   // console.log(params.slug);
@@ -139,7 +139,7 @@ const SystemMatters = () => {
 
   useEffect(() => {
     getSystem();
-    getMatters();
+    // getMatters();
   }, []);
 
   // if (systemDetails) {
@@ -151,19 +151,6 @@ const SystemMatters = () => {
   //   }
   // }
   console.log("sysId", systemDetails._id);
-  console.log("Post matters", systemMatters);
-  const getMatters = async () => {
-    try {
-      const res = await axios.get(
-        `/api/matter/getmatters?systemId=${systemDetails._id}`
-      );
-      if (res.status === 200) {
-        setSystemMatters(res.data.matters);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <div className=" flex md:justify-center gap-5 p-1 bg-gray-50 w-[85%] md:w-[1000px]">
@@ -212,10 +199,7 @@ const SystemMatters = () => {
             {/* <TextInput  /> */}
           </div>
           <div className=" w-full">
-            {systemMatters &&
-              systemMatters.map((matter) => (
-                <Matter key={matter._id} matter={matter} />
-              ))}
+            <Matter />
           </div>
           {/* <Matter />
           <Matter /> */}

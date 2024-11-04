@@ -1,6 +1,7 @@
 import User from "../models/user.models.js";
 import { errorHandler } from "../utils/error.js";
 import bcrypt from "bcryptjs";
+import Matter from "../models/matter.model.js";
 
 export const test = (req, res) => {
   res.json({ message: "API is still working" });
@@ -58,6 +59,14 @@ export const updateUser = async (req, res, next) => {
       },
       { new: true }
     );
+    await Matter.updateMany(
+      { userId: req.params.userId },
+      {
+        $set: {
+          userProfileImage: updatedUser.profilePicture,
+        },
+      }
+    );
 
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
@@ -90,6 +99,15 @@ export const signOut = (req, res, next) => {
       .clearCookie("access_token")
       .status(200)
       .json("You have successfully signed out");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

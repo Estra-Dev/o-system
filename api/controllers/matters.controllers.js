@@ -18,6 +18,7 @@ export const createMatters = async (req, res, next) => {
     const newMatter = new Matter({
       ...req.body,
       userId: member._id,
+      userProfileImage: member.profilePicture,
       systemId: system._id,
       system_name: system.name,
       anon_name: member.anon_name,
@@ -60,6 +61,26 @@ export const getMatters = async (req, res, next) => {
       createdAt: { $gte: oneMonthAgo },
     });
     res.status(200).json({ matters, totalMatters, lastMonthMatters });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteMatter = async (req, res, next) => {
+  const system = await System.findById(req.params.systemId);
+  const matter = await Matter.findById(req.params.matterId);
+
+  console.log(matter);
+  if (
+    !system.admin.includes(req.params.userId) ||
+    matter.userId !== req.params.userId
+  ) {
+    next(errorHandler(403, "You are not allowed to delete this matter"));
+  }
+
+  try {
+    await Matter.findByIdAndDelete(req.params.matterId);
+    res.status(200).json("Matter has been deleted successfully!");
   } catch (error) {
     next(error);
   }

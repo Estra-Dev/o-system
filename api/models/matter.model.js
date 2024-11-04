@@ -6,6 +6,9 @@ const matterSchema = new Schema(
       type: String,
       required: true,
     },
+    userProfileImage: {
+      type: String,
+    },
     systemId: {
       type: String,
       required: true,

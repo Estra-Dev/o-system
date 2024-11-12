@@ -85,3 +85,26 @@ export const deleteMatter = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateMatter = async (req, res, next) => {
+  if (req.user.id !== req.params.userId) {
+    next(errorHandler(403, "You are not allowed to edit this matter"));
+    return;
+  }
+  try {
+    const updatedMatter = await Matter.findByIdAndUpdate(
+      req.params.matterId,
+      {
+        $set: {
+          content: req.body.content,
+          image: req.body.image,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updatedMatter);
+  } catch (error) {
+    console.log(error);
+  }
+};

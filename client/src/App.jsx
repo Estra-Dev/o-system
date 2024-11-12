@@ -12,6 +12,7 @@ import FollowSystem from "./pages/FollowSystem";
 import JoinSystem from "./pages/JoinSystem";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import System from "./pages/System";
+import UpdateMatter from "./components/UpdateMatter";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/create-system" element={<CreateSystem />} />
           <Route path="/follow-system" element={<FollowSystem />} />
           <Route path="/system/:slug" element={<System />} />
+          <Route path="/update-matter/:matterId" element={<UpdateMatter />} />
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/join-system" element={<JoinSystem />} />

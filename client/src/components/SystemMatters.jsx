@@ -125,6 +125,7 @@ const SystemMatters = () => {
         console.log(data);
         setFormData(null);
         setOpenPost(false);
+        getSystem();
         // if (matters) {
         //   addMattersToMattersArr();
         // }

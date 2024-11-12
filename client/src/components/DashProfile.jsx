@@ -86,9 +86,6 @@ const DashProfile = () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
           setImageFileUrl(downloadUrl);
           setFormData({ ...formData, profilePicture: downloadUrl });
-          // if (downloadUrl) {
-          //   updateMattersUserProfile(currentUser._id);
-          // }
         });
       }
     );
@@ -99,22 +96,6 @@ const DashProfile = () => {
     setFormData({ ...formData, [name]: value });
   };
   console.log(formData);
-
-  // const updateMattersUserProfile = async (userId) => {
-  //   try {
-  //     const res = await axios.put(
-  //       `/api/matter/updatematterwithupdateduserprofile/${userId}`,{},
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-  //     if (res.status === 200) {
-  //       console.log("Maters User Profile");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
@@ -132,7 +113,6 @@ const DashProfile = () => {
         }
       );
       if (res.status === 200) {
-        // updateMattersUserProfile(currentUser._id);
         dispatch(updateSuccess(res.data));
         setShowForm(false);
         setImageFileUploadingProgress(null);

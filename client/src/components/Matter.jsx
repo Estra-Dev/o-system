@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { FaRegTrashCan, FaCircleExclamation } from "react-icons/fa6";
+import { CiEdit } from "react-icons/ci";
+import { Link } from "react-router-dom";
 
 const Matter = () => {
   const { systemDetails } = useSelector((state) => state.system);
@@ -10,6 +12,7 @@ const Matter = () => {
   const [systemMatters, setSystemMatters] = useState([]);
   const [matterIdToDelete, setMatterIdToDelete] = useState("");
   const [openModal, setOpenModal] = useState(false);
+
   // const [userDetails, setUserDetails] = useState("");
 
   console.log("Post matters", systemMatters);
@@ -20,8 +23,6 @@ const Matter = () => {
       );
       if (res.status === 200) {
         setSystemMatters(res.data.matters);
-
-        // getUser(res.data.userId);
       }
     } catch (error) {
       console.log(error);
@@ -47,20 +48,6 @@ const Matter = () => {
       console.log(error.response.data.message);
     }
   };
-
-  // const getUser = async (userId) => {
-  //   try {
-  //     const res = await axios.get(`/api/user/getuser/${userId}`);
-
-  //     if (res.status === 200) {
-  //       setUserDetails(res.data);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // console.log("user:", userDetails);
 
   useEffect(() => {
     getMatters();
@@ -104,7 +91,7 @@ const Matter = () => {
                   )}
                   <div className="reactions flex justify-around items-center gap-3 py-2 mt-3 text-xs border-t-2">
                     <span>Confirm</span>
-                    <span>Confused</span>
+                    <span>Important</span>
                     <span>Comment</span>
                     {matter.userId === currentUser._id &&
                       systemDetails.admin.includes(currentUser._id) && (
@@ -118,6 +105,13 @@ const Matter = () => {
                           <FaRegTrashCan className=" text-red-600 text-lg" />
                         </span>
                       )}
+                    {matter.userId === currentUser._id && (
+                      <Link to={`/update-matter/${matter._id}`}>
+                        <span className=" cursor-pointer">
+                          <CiEdit className=" text-blue-600 text-lg font-semibold" />
+                        </span>
+                      </Link>
+                    )}
                     {/* <span>Important</span> */}
                   </div>
                 </div>

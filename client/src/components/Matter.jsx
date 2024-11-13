@@ -78,9 +78,12 @@ const Matter = () => {
               </div>
               <div className="second max-w-3xl w-full flex flex-col items-end">
                 <div className=" w-[90%] rounded-md relative">
-                  <p className=" text-gray-900 font-semibold text-sm my-3">
-                    {matter && matter.content}
-                  </p>
+                  <p
+                    className=" text-gray-900 font-semibold text-sm my-3"
+                    dangerouslySetInnerHTML={{
+                      __html: matter && matter.content,
+                    }}
+                  ></p>
 
                   {matter && matter.image && (
                     <img

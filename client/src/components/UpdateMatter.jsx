@@ -33,7 +33,7 @@ const UpdateMatter = () => {
   const { matterId } = useParams();
 
   console.log("useparams", matterId);
-  console.log(formData);
+  console.log("data", formData);
 
   const handleUploadImage = async () => {
     try {

@@ -2,6 +2,7 @@ import User from "../models/user.models.js";
 import { errorHandler } from "../utils/error.js";
 import bcrypt from "bcryptjs";
 import Matter from "../models/matter.model.js";
+import System from "../models/system.models.js";
 
 export const test = (req, res) => {
   res.json({ message: "API is still working" });
@@ -108,6 +109,41 @@ export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
     res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUsers = async (req, res, next) => {
+  try {
+    // const system = await System.findById(req.params.systemId);
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortDirection = req.query.sort === "asc" ? 1 : -1;
+    const users = await User.find()
+      .sort({ createdAt: sortDirection })
+      .limit(limit)
+      .skip(startIndex);
+
+    const usersWithoutPassword = users.map((user) => {
+      const { password, ...rest } = user._doc;
+      return rest;
+    });
+
+    const totalUser = await User.countDocuments();
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lastMonthUsers = await User.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    res
+      .status(200)
+      .json({ users: usersWithoutPassword, totalUser, lastMonthUsers });
   } catch (error) {
     next(error);
   }

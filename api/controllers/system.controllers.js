@@ -52,26 +52,28 @@ export const getSystem = async (req, res, next) => {
   }
 };
 
-// export const addMattersToMattersArr = async (req, res, next) => {
-//   // const system = await System.findOne({ _id: req.params.systemId });
-//   try {
-//     if (req.params.matterId) {
-//       const addAMatter = await System.findByIdAndUpdate(
-//         req.params.systemId,
-//         {
-//           $push: {
-//             matters: { $each: [req.params.matterId] },
-//           },
-//           // $set: {
-//           //   numberOfMatters: system.matters.length,
-//           // },
-//         },
-//         { new: true }
-//       ).exec();
-//       res.status(200).json(addAMatter);
-//       console.log("matters", addAMatter);
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const removeMember = async (req, res, next) => {
+  const system = await System.findOne({ _id: req.params.systemId });
+  try {
+    if (!system.admin.includes(req.params.userId)) {
+      return next(
+        errorHandler(403, "You are not allowed to delete any member")
+      );
+    }
+
+    system.members.map((member) => {
+      if (system.ownedBy === member) {
+        return next(errorHandler(403, "Cant delete this admin"));
+      }
+    });
+
+    await System.findByIdAndUpdate(
+      req.params.systemId,
+      { $pull: { members } },
+      { new: true }
+    );
+    res.status(200).json("Successfully removed this person");
+  } catch (error) {
+    next(error);
+  }
+};

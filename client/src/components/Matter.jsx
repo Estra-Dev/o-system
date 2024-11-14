@@ -143,7 +143,9 @@ const Matter = () => {
               <Button outline color={"failure"} onClick={handleDeleteMatter}>
                 <FaRegTrashCan className=" text-red-500 text-lg" />
               </Button>
-              <Button outline>Cancel</Button>
+              <Button outline onClick={() => setOpenModal(false)}>
+                Cancel
+              </Button>
             </div>
           </div>
         </Modal.Body>

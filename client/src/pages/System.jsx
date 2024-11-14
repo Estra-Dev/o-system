@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import SystemSidebar from "../components/SystemSidebar";
 import SystemMatters from "../components/SystemMatters";
+import SystemMembers from "../components/SystemMembers";
 
 const System = () => {
   const location = useLocation();
@@ -24,6 +25,7 @@ const System = () => {
         <SystemSidebar />
       </div>
       {tab === "matters" && <SystemMatters />}
+      {tab === "members" && <SystemMembers />}
     </div>
   );
 };

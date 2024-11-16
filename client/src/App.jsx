@@ -26,6 +26,7 @@ const App = () => {
           <Route path="/create-system" element={<CreateSystem />} />
           <Route path="/follow-system" element={<FollowSystem />} />
           <Route path="/system/:slug" element={<System />} />
+          <Route path="/system/:slug/:matterId" element={<System />} />
           <Route path="/update-matter/:matterId" element={<UpdateMatter />} />
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>

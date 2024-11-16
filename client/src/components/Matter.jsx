@@ -95,7 +95,11 @@ const Matter = () => {
                   <div className="reactions flex justify-around items-center gap-3 py-2 mt-3 text-xs border-t-2">
                     <span>Confirm</span>
                     <span>Important</span>
-                    <span>Comment</span>
+                    <Link
+                      to={`/system/${systemDetails.slug}/${matter._id}?tab=thismatter`}
+                    >
+                      Contributes
+                    </Link>
                     {matter.userId === currentUser._id &&
                       systemDetails.admin.includes(currentUser._id) && (
                         <span

@@ -1,6 +1,7 @@
 import express from "express";
 import { verifyToken } from "../utils/verifyUser.js";
 import {
+  addMember,
   createSystem,
   getSystem,
   removeMember,
@@ -11,5 +12,6 @@ const router = express.Router();
 router.post("/createsystem", verifyToken, createSystem);
 router.get("/getsystem/:systemslug", verifyToken, getSystem);
 router.put("/removemember/:systemId/:userId", removeMember);
+router.put("/addmember/:systemId/:userId", addMember);
 
 export default router;

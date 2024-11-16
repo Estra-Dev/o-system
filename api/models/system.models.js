@@ -35,7 +35,7 @@ const systemSchema = Schema(
     },
     numberOfMembers: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     followers: {
       type: Array,

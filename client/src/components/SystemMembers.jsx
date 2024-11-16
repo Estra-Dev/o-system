@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Button, Modal, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FaCircleExclamation, FaRegTrashCan } from "react-icons/fa6";
@@ -8,12 +9,13 @@ import { FaCircleExclamation, FaRegTrashCan } from "react-icons/fa6";
 const SystemMembers = () => {
   const params = useParams();
   const [systemDetails, setSystemDetails] = useState(null);
-  // const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const membersCount = [];
   const [fetchedMembers, setFetchedMembers] = useState([]);
   const [showMore, setShowMore] = useState(true);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [userIdToRemove, setUserIdToRemove] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [removeError, setRemoveError] = useState(null);
 
   const getSystem = async () => {
     try {
@@ -65,23 +67,24 @@ const SystemMembers = () => {
   };
 
   const handleRemoveMember = async () => {
-    // console.log("idtdel", userIdToDelete);
+    try {
+      const res = await axios.put(
+        `/api/system/removemember/${systemDetails._id}/${currentUser._id}`,
+        { userIdToRemove }
+      );
 
-    // try {
-    //   const res = await axios.put(
-    //     `/api/system/removemember/${systemDetails._id}/${userIdToDelete}/$`
-    //   );
-
-    //   if (res.status === 200) {
-    //     setFetchedMembers((prev) => {
-    //       prev.filter((member) => member._id !== userIdToDelete);
-    //     });
-    //     setOpenModal(false);
-    //     getUsers();
-    //   }
-    // } catch (error) {
-    //   console.log(error.response.data.message);
-    // }
+      if (res.status === 200) {
+        // setFetchedMembers((prev) => {
+        //   prev.filter((member) => member._id !== userIdToDelete);
+        // });
+        membersCount.filter((member) => member._id !== userIdToRemove);
+        setOpenModal(false);
+        getUsers();
+      }
+    } catch (error) {
+      setOpenModal(false);
+      console.log(error.response.data.message);
+    }
     console.log("Removed");
   };
 
@@ -129,7 +132,7 @@ const SystemMembers = () => {
                       size={"xs"}
                       onClick={() => {
                         setOpenModal(true);
-                        setUserIdToDelete(member._id);
+                        setUserIdToRemove(member._id);
                       }}
                       gradientDuoTone={"purpleToPink"}
                       outline

@@ -54,26 +54,49 @@ export const getSystem = async (req, res, next) => {
 
 export const removeMember = async (req, res, next) => {
   const system = await System.findOne({ _id: req.params.systemId });
+  const { userIdToRemove } = req.body;
+  console.log(system);
+  if (!system.admin.includes(req.params.userId)) {
+    return next(errorHandler(403, "You are not allowed to delete any member"));
+  }
+  if (!system.members.includes(userIdToRemove)) {
+    return next(errorHandler(403, "No such person in this System"));
+  }
+  if (system.ownedBy === userIdToRemove) {
+    return next(errorHandler(403, "Cant delete this admin"));
+  }
   try {
-    if (!system.admin.includes(req.params.userId)) {
-      return next(
-        errorHandler(403, "You are not allowed to delete any member")
-      );
-    }
-
-    system.members.map((member) => {
-      if (system.ownedBy === member) {
-        return next(errorHandler(403, "Cant delete this admin"));
-      }
-    });
-
-    await System.findByIdAndUpdate(
+    const removedUser = await System.findByIdAndUpdate(
       req.params.systemId,
-      { $pull: { members } },
+      { $pull: { members: userIdToRemove } },
       { new: true }
     );
-    res.status(200).json("Successfully removed this person");
+    res.status(200).json(removedUser);
   } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const addMember = async (req, res, next) => {
+  const system = await System.findOne({ _id: req.params.systemId });
+  const { userIdToRemove } = req.body;
+  console.log(system);
+  if (!system.admin.includes(req.params.userId)) {
+    return next(errorHandler(403, "You are not allowed to add members"));
+  }
+  if (!system.members.includes(userIdToRemove)) {
+    return next(errorHandler(403, "Member already exist"));
+  }
+  try {
+    const addedUser = await System.findByIdAndUpdate(
+      req.params.systemId,
+      { $push: { members: userIdToRemove } },
+      { new: true }
+    );
+    res.status(200).json(addMember);
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 };

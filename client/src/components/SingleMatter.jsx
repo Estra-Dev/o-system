@@ -2,6 +2,7 @@ import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import CommentSection from "./CommentSection";
 
 const SingleMatter = () => {
   const { matterId } = useParams();
@@ -60,6 +61,7 @@ const SingleMatter = () => {
         dangerouslySetInnerHTML={{ __html: matter.content }}
         className=" mt-5 px-3 max-w-2xl mx-auto w-full matter-content"
       ></p>
+      <CommentSection matterId={matter._id} />
     </main>
   );
 };

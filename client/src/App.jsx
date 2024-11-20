@@ -13,10 +13,12 @@ import JoinSystem from "./pages/JoinSystem";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import System from "./pages/System";
 import UpdateMatter from "./components/UpdateMatter";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route element={<PrivateRoute />}>

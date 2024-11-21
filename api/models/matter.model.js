@@ -28,6 +28,14 @@ const matterSchema = new Schema(
     image: {
       type: String,
     },
+    likes: {
+      type: Array,
+      default: [],
+    },
+    numberOfLikes: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

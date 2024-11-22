@@ -1,16 +1,20 @@
 import { useSelector } from "react-redux";
 // import User from "../../../api/models/user.models";
 import { Link, useNavigate } from "react-router-dom";
-import { Alert, Button, Textarea } from "flowbite-react";
+import { Alert, Button, Modal, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Comment from "./Comment";
+import { FaCircleExclamation, FaRegTrashCan } from "react-icons/fa6";
 
 const CommentSection = ({ matterId }) => {
   const { currentUser } = useSelector((state) => state.user);
+  const { systemDetails } = useSelector((state) => state.system);
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
   const [comments, setComments] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   const navigate = useNavigate();
 
@@ -85,6 +89,21 @@ const CommentSection = ({ matterId }) => {
     );
   };
 
+  const handleDelete = async (commentId) => {
+    setModal(false);
+    try {
+      const res = await axios.delete(
+        `/api/comment/deletecomment/${systemDetails._id}/${commentId}`
+      );
+
+      if (res.status === 200) {
+        setComments(comments.filter((comment) => comment._id !== commentId));
+      }
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   return (
     <div className=" max-w-2xl mx-auto w-full p-3">
       {currentUser ? (
@@ -152,10 +171,38 @@ const CommentSection = ({ matterId }) => {
                 comment={comment}
                 onLike={handleLike}
                 onEdit={handleEdit}
+                onDelete={(commentId) => {
+                  setModal(true);
+                  setCommentToDelete(commentId);
+                }}
               />
             ))}
         </>
       )}
+
+      <Modal popup size={"sm"} onClose={() => setModal(false)} show={modal}>
+        <Modal.Header />
+        <Modal.Body>
+          <div className=" text-center">
+            <FaCircleExclamation className=" w-10 h-10 mx-auto mb-4 text-red-500" />
+            <h3 className=" text-lg mb-4 text-gray-500">
+              Are You sure you want to delete this comment?
+            </h3>
+            <div className=" flex justify-center gap-4">
+              <Button
+                outline
+                color={"failure"}
+                onClick={() => handleDelete(commentToDelete)}
+              >
+                <FaRegTrashCan className=" text-red-500 text-lg" />
+              </Button>
+              <Button outline onClick={() => setModal(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

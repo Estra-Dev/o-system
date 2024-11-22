@@ -80,3 +80,23 @@ export const editComment = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    const system = await System.findById(req.params.systemId);
+
+    const admin = system.admin.indexOf(req.user.id);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    if (comment.userId !== req.user.id && !admin) {
+      return next(errorHandler(403, "You are not allowed to this comment"));
+    }
+
+    await Comment.findByIdAndDelete(req.params.commentId);
+    res.status(200).json("Comment Deleted");
+  } catch (error) {
+    next(error);
+  }
+};

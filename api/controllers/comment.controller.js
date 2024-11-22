@@ -1,4 +1,5 @@
 import Comment from "../models/comment.model.js";
+import System from "../models/system.models.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createComment = async (req, res, next) => {
@@ -50,6 +51,31 @@ export const likeComment = async (req, res, next) => {
     }
     await comment.save();
     res.status(200).json(comment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const editComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    const system = await System.findById(req.params.systemId);
+    const admin = system.admin.indexOf(req.user.id);
+    if (!comment) {
+      return next(errorHandler(404, "comment not found"));
+    }
+    if (comment.userId !== req.user.id && !admin) {
+      return next(
+        errorHandler(403, "You are not allowed to edit this comment")
+      );
+    }
+
+    const editedComment = await Comment.findByIdAndUpdate(
+      req.params.commentId,
+      { content: req.body.content },
+      { new: true }
+    );
+    res.status(200).json(editedComment);
   } catch (error) {
     next(error);
   }

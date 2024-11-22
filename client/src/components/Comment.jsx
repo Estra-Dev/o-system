@@ -14,8 +14,6 @@ const Comment = ({ comment, onLike, onEdit, onDelete }) => {
   const { currentUser } = useSelector((state) => state.user);
   const { systemDetails } = useSelector((state) => state.system);
 
-  console.log("first user", user);
-  console.log("editedContent", editedContent);
   useEffect(() => {
     const getUser = async () => {
       try {

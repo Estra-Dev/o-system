@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { FaRegTrashCan, FaCircleExclamation } from "react-icons/fa6";
+import { GiConfirmed } from "react-icons/gi";
 import { CiEdit } from "react-icons/ci";
 import { Link } from "react-router-dom";
 
@@ -53,6 +54,27 @@ const Matter = () => {
     getMatters();
   }, [systemDetails._id]);
 
+  const handleConfirm = async (matterId) => {
+    try {
+      const res = await axios.put(`/api/matter/likematter/${matterId}`);
+      if (res.status === 200) {
+        setSystemMatters(
+          systemMatters.map((matter) =>
+            matter._id === matterId
+              ? {
+                  ...matter,
+                  likes: res.data.likes,
+                  numberOfLikes: res.data.length,
+                }
+              : matter
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       {systemMatters && systemMatters.length > 0 ? (
@@ -92,8 +114,25 @@ const Matter = () => {
                       alt="post image"
                     />
                   )}
-                  <div className="reactions flex justify-around items-center gap-3 py-2 mt-3 text-xs border-t-2">
-                    <span>Confirm</span>
+                  <div className="reactions flex items-center gap-3 py-2 mt-3 text-xs border-t-2">
+                    <button
+                      type="button"
+                      className={` text-gray-400 hover:text-green-500 ${
+                        matter.likes.includes(currentUser._id) &&
+                        "text-green-500"
+                      }`}
+                      onClick={() => handleConfirm(matter._id)}
+                    >
+                      <GiConfirmed className=" text-lg" />
+                    </button>
+                    <p>
+                      {matter.likes.length > 0 &&
+                        matter.likes.length +
+                          " " +
+                          (matter.likes.length === 1
+                            ? "Confirmation"
+                            : "Confirmations")}
+                    </p>
                     <span>Important</span>
                     <Link
                       to={`/system/${systemDetails.slug}/${matter._id}?tab=thismatter`}

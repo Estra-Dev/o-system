@@ -3,6 +3,17 @@ import System from "../models/system.models.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createComment = async (req, res, next) => {
+  const system = await System.findById(req.params.systemId);
+  const member = system.members.indexOf(req.user.id);
+
+  if (!member) {
+    return next(
+      errorHandler(
+        403,
+        "You are not permitted to comment here, become a member first"
+      )
+    );
+  }
   try {
     const { content, matterId, userId } = req.body;
 

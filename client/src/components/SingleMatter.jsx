@@ -53,9 +53,7 @@ const SingleMatter = () => {
         <span className=" text-xs p-3">
           {matter && new Date(matter.updatedAt).toLocaleDateString()}
         </span>
-        <span>
-          {matter && matter.content.length / (1000).toFixed(0)} mins Read
-        </span>
+        <span>{matter && matter.anon_name}</span>
       </div>
       <p
         dangerouslySetInnerHTML={{ __html: matter.content }}

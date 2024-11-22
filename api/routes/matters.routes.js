@@ -4,6 +4,7 @@ import {
   createMatters,
   deleteMatter,
   getMatters,
+  likeMatter,
   updateMatter,
   // updateMatterWithUpdatedUserProfile,
 } from "../controllers/matters.controllers.js";
@@ -18,5 +19,6 @@ router.delete(
   deleteMatter
 );
 router.put("/updatematter/:matterId/:userId", verifyToken, updateMatter);
+router.put("/likematter/:matterId", verifyToken, likeMatter);
 
 export default router;

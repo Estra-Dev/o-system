@@ -108,3 +108,25 @@ export const updateMatter = async (req, res, next) => {
     console.log(error);
   }
 };
+
+export const likeMatter = async (req, res, next) => {
+  try {
+    const matter = await Matter.findById(req.params.matterId);
+    if (!matter) {
+      return next(errorHandler(404, "Matter does not exist"));
+    }
+    const userIndex = matter.likes.indexOf(req.user.id);
+
+    if (userIndex === -1) {
+      matter.numberOfLikes += 1;
+      matter.likes.push(req.user.id);
+    } else {
+      matter.numberOfLikes -= 1;
+      matter.likes.splice(userIndex, 1);
+    }
+    await matter.save();
+    res.status(200).json(matter);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-// import User from "../../../api/models/user.models";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Modal, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
@@ -24,7 +23,7 @@ const CommentSection = ({ matterId }) => {
       return;
     }
     try {
-      const res = await axios.post(`/api/comment/create`, {
+      const res = await axios.post(`/api/comment/create/${systemDetails._id}`, {
         content: comment,
         matterId,
         userId: currentUser._id,
@@ -35,14 +34,10 @@ const CommentSection = ({ matterId }) => {
         setCommentError(null);
         setComments([res.data, ...comments]);
       }
-      console.log("first comment", res.data);
     } catch (error) {
-      console.log(error);
       setCommentError(error.response.data.message);
     }
   };
-
-  console.log("all comments", comments);
 
   useEffect(() => {
     const getComments = async () => {
@@ -63,7 +58,6 @@ const CommentSection = ({ matterId }) => {
       }
       const res = await axios.put(`/api/comment/likecomment/${commentId}`);
       if (res.status === 200) {
-        console.log("liked", res.data);
         setComments(
           comments.map((comment) =>
             comment._id == commentId
@@ -127,7 +121,7 @@ const CommentSection = ({ matterId }) => {
           <Link to={"/sign-in"}>Sign In</Link>
         </div>
       )}
-      {currentUser && (
+      {currentUser && systemDetails.members.includes(currentUser._id) && (
         <form
           onSubmit={handleSubmit}
           className=" borber border-[1px] border-teal-500 rounded-md p-3"

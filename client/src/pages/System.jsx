@@ -4,6 +4,7 @@ import SystemSidebar from "../components/SystemSidebar";
 import SystemMatters from "../components/SystemMatters";
 import SystemMembers from "../components/SystemMembers";
 import SingleMatter from "../components/SingleMatter";
+import AllUsers from "../components/AllUsers";
 
 const System = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const System = () => {
       {tab === "matters" && <SystemMatters />}
       {tab === "members" && <SystemMembers />}
       {tab === "thismatter" && <SingleMatter />}
+      {tab === "add-people" && <AllUsers />}
     </div>
   );
 };

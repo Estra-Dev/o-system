@@ -10,7 +10,7 @@ import {
 import { Alert, Button, FileInput, Modal } from "flowbite-react";
 import { PiStarLight } from "react-icons/pi";
 import { IoMdImages } from "react-icons/io";
-import Matter from "./Matter";
+import Matters from "./Matters";
 import {
   getDownloadURL,
   getStorage,
@@ -164,24 +164,26 @@ const SystemMatters = () => {
                 <PiStarLight className=" w-5 h-5 text-yellow-300" />
               </span>
             </h1>
-            <p className=" text-xs font-semibold italic shadow-md">
-              {systemDetails.description}
-            </p>
           </div>
           {systemDetails && (
             <div>
               {systemDetails.admin.includes(currentUser._id) ||
               systemDetails.followers.includes(currentUser._id) ? (
-                <Button outline size={"sm"}>
+                <Button outline size={"xs"}>
                   Following
                 </Button>
               ) : (
-                <Button size={"sm"}>Follow</Button>
+                <Button size={"xs"} gradientDuoTone={"purpleToBlue"}>
+                  Follow
+                </Button>
               )}
             </div>
           )}
         </div>
         <div className="all-matters flex flex-col w-full">
+          <p className=" text-sm font-semibold italic my-4 px-2">
+            {systemDetails.description}
+          </p>
           <div className="publish w-full text-xs md:text-sm font-semibold p-3 bg-white">
             {systemDetails.members.includes(currentUser._id) ? (
               <Button
@@ -200,7 +202,7 @@ const SystemMatters = () => {
             {/* <TextInput  /> */}
           </div>
           <div className=" w-full">
-            <Matter />
+            <Matters />
           </div>
           {/* <Matter />
           <Matter /> */}

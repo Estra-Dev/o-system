@@ -6,7 +6,6 @@ import {
   getMatters,
   likeMatter,
   updateMatter,
-  // updateMatterWithUpdatedUserProfile,
 } from "../controllers/matters.controllers.js";
 
 const router = express.Router();

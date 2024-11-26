@@ -6,6 +6,7 @@ import { HiOutlineUserGroup } from "react-icons/hi2";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { FaPeoplePulling } from "react-icons/fa6";
 
 const SystemSidebar = () => {
   const params = useParams();
@@ -113,6 +114,16 @@ const SystemSidebar = () => {
                 <div className=" flex flex-col justify-center items-center text-xs font-semibold">
                   <span>{membersCount.length}</span>
                   <HiOutlineUserGroup className=" w-7 h-7 mb-1" />
+                </div>
+              </Sidebar.Item>
+            </Link>
+          )}
+          {systemDetails && systemDetails.admin.includes(currentUser._id) && (
+            <Link to={`/system/${systemDetails.slug}?tab=add-people`}>
+              <Sidebar.Item as="div">
+                <div className=" flex flex-col justify-center items-center text-xs font-semibold">
+                  <FaPeoplePulling className=" w-7 h-7 mb-1" />
+                  Add
                 </div>
               </Sidebar.Item>
             </Link>

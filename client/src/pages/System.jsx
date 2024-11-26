@@ -21,7 +21,7 @@ const System = () => {
   }, [location.search]);
 
   return (
-    <div className=" min-h-screen flex relative max-w-3xl w-full">
+    <div className=" min-h-screen flex relative max-w-5xl w-full">
       <div className=" w-[15%] md:w-[100px]">
         {/* Sidebar */}
         <SystemSidebar />

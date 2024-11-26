@@ -12,6 +12,6 @@ const router = express.Router();
 router.post("/createsystem", verifyToken, createSystem);
 router.get("/getsystem/:systemslug", verifyToken, getSystem);
 router.put("/removemember/:systemId/:userId", removeMember);
-router.put("/addmember/:systemId/:userId", addMember);
+router.put("/addmember/:systemId/:userId", verifyToken, addMember);
 
 export default router;

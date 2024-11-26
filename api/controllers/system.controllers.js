@@ -68,7 +68,10 @@ export const removeMember = async (req, res, next) => {
   try {
     const removedUser = await System.findByIdAndUpdate(
       req.params.systemId,
-      { $pull: { members: userIdToRemove } },
+      {
+        $pull: { members: userIdToRemove },
+        numberOfMembers: numberOfMembers - 1,
+      },
       { new: true }
     );
     res.status(200).json(removedUser);
@@ -79,22 +82,47 @@ export const removeMember = async (req, res, next) => {
 };
 
 export const addMember = async (req, res, next) => {
-  const system = await System.findOne({ _id: req.params.systemId });
-  const { userIdToRemove } = req.body;
-  console.log(system);
-  if (!system.admin.includes(req.params.userId)) {
-    return next(errorHandler(403, "You are not allowed to add members"));
-  }
-  if (!system.members.includes(userIdToRemove)) {
-    return next(errorHandler(403, "Member already exist"));
-  }
+  // const { userIdToRemove } = req.body;
+  // console.log(system);
+  // if (!system.admin.includes(req.params.userId)) {
+  //   return next(errorHandler(403, "You are not allowed to add members"));
+  // }
+  // if (!system.members.includes(userIdToRemove)) {
+  //   return next(errorHandler(403, "Member already exist"));
+  // }
+
+  // const addedUser = await System.findByIdAndUpdate(
+  //   req.params.systemId,
+  //   { $push: { members: userIdToRemove } },
+  //   { new: true }
+  // );
   try {
-    const addedUser = await System.findByIdAndUpdate(
-      req.params.systemId,
-      { $push: { members: userIdToRemove } },
-      { new: true }
-    );
-    res.status(200).json(addMember);
+    const system = await System.findById(req.params.systemId);
+
+    // check if system exist
+    if (!system) {
+      return next(errorHandler(404, "System does not exist"));
+    }
+
+    // check for membership and for admin
+    const memberIndex = system.members.indexOf(req.params.userId);
+    const isAdmin = system.admin.indexOf(req.user.id);
+
+    if (isAdmin === -1) {
+      return next(errorHandler(403, "You are not an admin"));
+    }
+
+    // add if user is not a member or remove if user is a member
+    if (memberIndex === -1) {
+      system.numberOfMembers += 1;
+      system.members.push(req.params.userId);
+    } else {
+      system.numberOfMembers -= 1;
+      system.members.splice(userIndex, 1);
+    }
+
+    await system.save();
+    res.status(200).json(system);
   } catch (error) {
     console.log(error);
     next(error);

@@ -90,20 +90,20 @@ const SystemMatters = () => {
     }
   };
 
-  const getSystem = async () => {
-    try {
-      const res = await axios.get(`/api/system/getsystem/${params.slug}`);
-      console.log(res);
-      if (res.status === 200) {
-        // setSystemDetails(res.data);
-        dispatch(getSystemSuccess(res.data));
-        // navigate(`/system/${res.data.slug}?tab=matters`);
-      }
-    } catch (error) {
-      dispatch(getSystemFailure(error));
-      console.log(error);
-    }
-  };
+  // const getSystem = async () => {
+  //   try {
+  //     const res = await axios.get(`/api/system/getsystem/${params.slug}`);
+  //     console.log(res);
+  //     if (res.status === 200) {
+  //       // setSystemDetails(res.data);
+  //       dispatch(getSystemSuccess(res.data));
+  //       // navigate(`/system/${res.data.slug}?tab=matters`);
+  //     }
+  //   } catch (error) {
+  //     dispatch(getSystemFailure(error));
+  //     console.log(error);
+  //   }
+  // };
 
   console.log("System:", systemDetails);
 
@@ -125,7 +125,7 @@ const SystemMatters = () => {
         console.log(data);
         setFormData(null);
         setOpenPost(false);
-        getSystem();
+        // getSystem();
         // if (matters) {
         //   addMattersToMattersArr();
         // }
@@ -139,7 +139,7 @@ const SystemMatters = () => {
   };
 
   useEffect(() => {
-    getSystem();
+    // getSystem();
     // getMatters();
   }, []);
 

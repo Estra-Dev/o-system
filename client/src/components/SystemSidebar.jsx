@@ -5,14 +5,20 @@ import { PiNewspaperBold } from "react-icons/pi";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaPeoplePulling } from "react-icons/fa6";
+import {
+  getSystemSuccess,
+  getSystemFailure,
+} from "../redux/system/systemSlice";
 
 const SystemSidebar = () => {
   const params = useParams();
   // console.log(params.slug);
-  const [systemDetails, setSystemDetails] = useState(null);
+  const dispatch = useDispatch();
+  const [systemDetail, setSystemDetail] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const { systemDetails } = useSelector((state) => state.system);
   const membersCount = [];
   const [fetchedMembers, setFetchedMembers] = useState(null);
 
@@ -21,7 +27,8 @@ const SystemSidebar = () => {
       const res = await axios.get(`/api/system/getsystem/${params.slug}`);
       console.log(res);
       if (res.status === 200) {
-        setSystemDetails(res.data);
+        setSystemDetail(res.data);
+        dispatch(getSystemSuccess(res.data));
       }
     } catch (error) {
       console.log(error);
@@ -62,7 +69,7 @@ const SystemSidebar = () => {
   useEffect(() => {
     getSystem();
     getUsers();
-  }, []);
+  }, [params.slug]);
   if (systemDetails) {
     if (systemDetails.admin.includes(currentUser._id)) {
       console.log("You are an Admin");
@@ -75,10 +82,10 @@ const SystemSidebar = () => {
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <Sidebar.Item>
-            {systemDetails && (
+            {systemDetails && systemDetail && (
               <div className=" w-12 h-12 mb-7 mt-5 rounded-full overflow-hidden">
                 <img
-                  src={systemDetails.logo}
+                  src={systemDetails.logo || systemDetail.logo}
                   alt="Logo"
                   className=" rounded-full w-full h-full object-cover"
                 />
@@ -98,8 +105,8 @@ const SystemSidebar = () => {
               </div>
             </Sidebar.Item>
           </Link>
-          {systemDetails && (
-            <Link to={`/system/${systemDetails.slug}?tab=matters`}>
+          {systemDetail && (
+            <Link to={`/system/${systemDetail.slug}?tab=matters`}>
               <Sidebar.Item as="div">
                 <div className=" flex flex-col justify-center items-center text-xs font-semibold">
                   <PiNewspaperBold className=" w-7 h-7 mb-1" />

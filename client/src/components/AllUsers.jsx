@@ -2,7 +2,12 @@ import axios from "axios";
 import { Button, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateStart,
+  updateSuccess,
+  updateError,
+} from "../redux/system/systemSlice";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +15,7 @@ const AllUsers = () => {
   const { systemDetails } = useSelector((state) => state.system);
   const [memberIdToAdd, setMemberIdToAdd] = useState("");
   const [modal, setModal] = useState(false);
+  const dispatch = useDispatch();
 
   console.log("usersss", memberIdToAdd);
 
@@ -25,16 +31,20 @@ const AllUsers = () => {
     }
   };
 
-  const handleAdd = async () => {
+  const handleAdd = async (memberId) => {
     setModal(false);
+    dispatch(updateStart());
     try {
       const res = await axios.put(
-        `/api/system/addmember/${systemDetails._id}/${memberIdToAdd}`
+        // `/api/system/addmember/${systemDetails._id}/${memberIdToAdd}`
+        `/api/system/addmember/${systemDetails._id}/${memberId}`
       );
       if (res.status === 200) {
         console.log("added", res.data);
+        dispatch(updateSuccess(res.data));
       }
     } catch (error) {
+      dispatch(updateError(error.response.data.message));
       console.log(error);
     }
   };
@@ -67,6 +77,7 @@ const AllUsers = () => {
                 gradientDuoTone={"purpleToBlue"}
                 size={"xs"}
                 outline
+                onClick={() => handleAdd(user._id)}
               >
                 Remove
               </Button>
@@ -76,8 +87,9 @@ const AllUsers = () => {
                 gradientDuoTone={"purpleToBlue"}
                 size={"xs"}
                 onClick={() => {
-                  setMemberIdToAdd(user._id);
-                  setModal(true);
+                  // setMemberIdToAdd(user._id);
+                  // setModal(true);
+                  handleAdd(user._id);
                 }}
               >
                 Add
@@ -87,7 +99,7 @@ const AllUsers = () => {
         ))}
       </div>
 
-      <Modal popup size={"sm"} onClose={() => setModal(false)} show={modal}>
+      {/* <Modal popup size={"sm"} onClose={() => setModal(false)} show={modal}>
         <Modal.Header />
         <Modal.Body>
           <div className=" text-center">
@@ -96,7 +108,7 @@ const AllUsers = () => {
               Please make sure you know this person
             </h3>
             <div className=" flex justify-center gap-4">
-              <Button outline color={"failure"} onClick={handleAdd}>
+              <Button outline color={"success"} onClick={handleAdd}>
                 <p>Yes, Continue</p>
               </Button>
               <Button outline onClick={() => setModal(false)}>
@@ -105,7 +117,7 @@ const AllUsers = () => {
             </div>
           </div>
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

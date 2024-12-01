@@ -1,33 +1,40 @@
 import axios from "axios";
 import { Button, Modal, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FaCircleExclamation, FaRegTrashCan } from "react-icons/fa6";
+import {
+  updateStart,
+  updateSuccess,
+  updateError,
+} from "../redux/system/systemSlice";
 
 const SystemMembers = () => {
-  const params = useParams();
-  const [systemDetails, setSystemDetails] = useState(null);
+  // const params = useParams();
+  // const [systemDetails, setSystemDetails] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const { systemDetails } = useSelector((state) => state.system);
   const membersCount = [];
   const [fetchedMembers, setFetchedMembers] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [userIdToRemove, setUserIdToRemove] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [removeError, setRemoveError] = useState(null);
+  const dispatch = useDispatch();
 
-  const getSystem = async () => {
-    try {
-      const res = await axios.get(`/api/system/getsystem/${params.slug}`);
-      // console.log("wetin", res);
-      if (res.status === 200) {
-        setSystemDetails(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getSystem = async () => {
+  //   try {
+  //     const res = await axios.get(`/api/system/getsystem/${params.slug}`);
+  //     // console.log("wetin", res);
+  //     if (res.status === 200) {
+  //       setSystemDetails(res.data);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const getUsers = async () => {
     try {
@@ -67,6 +74,7 @@ const SystemMembers = () => {
   };
 
   const handleRemoveMember = async () => {
+    dispatch(updateStart());
     try {
       const res = await axios.put(
         `/api/system/removemember/${systemDetails._id}/${currentUser._id}`,
@@ -74,9 +82,7 @@ const SystemMembers = () => {
       );
 
       if (res.status === 200) {
-        // setFetchedMembers((prev) => {
-        //   prev.filter((member) => member._id !== userIdToDelete);
-        // });
+        dispatch(updateSuccess(res.data));
         membersCount.filter((member) => member._id !== userIdToRemove);
         setOpenModal(false);
         getUsers();
@@ -84,6 +90,7 @@ const SystemMembers = () => {
     } catch (error) {
       setOpenModal(false);
       console.log(error.response.data.message);
+      dispatch(updateError(error.response.data.message));
     }
     console.log("Removed");
   };
@@ -92,8 +99,23 @@ const SystemMembers = () => {
 
   useEffect(() => {
     getUsers();
-    getSystem();
+    // getSystem();
   }, []);
+
+  const handleMakeAdmin = async (userId) => {
+    dispatch(updateStart());
+    try {
+      const res = await axios.put(
+        `/api/system/makeadmin/${systemDetails._id}/${userId}`
+      );
+      if (res.status === 200) {
+        dispatch(updateSuccess(res.data));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(updateError(error.response.data.message));
+    }
+  };
 
   return (
     <div className=" table-auto overflow-x-scroll md:mx-auto p-3">
@@ -106,6 +128,7 @@ const SystemMembers = () => {
               <Table.HeadCell>Email</Table.HeadCell>
               <Table.HeadCell>Admin</Table.HeadCell>
               <Table.HeadCell>Remove </Table.HeadCell>
+              <Table.HeadCell>Add as Admin</Table.HeadCell>
             </Table.Head>
             {membersCount.map((member) => (
               <Table.Body className=" divide-y" key={member._id}>
@@ -140,6 +163,27 @@ const SystemMembers = () => {
                     >
                       <IoTrashBinOutline />
                     </Button>
+                  </Table.Cell>
+                  <Table.Cell>
+                    {systemDetails &&
+                    systemDetails.admin.includes(member._id) &&
+                    systemDetails.admin.includes(currentUser._id) ? (
+                      <button
+                        type="button"
+                        className=" font-semibold text-red-500 text-xl"
+                        onClick={() => handleMakeAdmin(member._id)}
+                      >
+                        -
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className=" font-semibold text-cyan-500 text-xl"
+                        onClick={() => handleMakeAdmin(member._id)}
+                      >
+                        +
+                      </button>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               </Table.Body>

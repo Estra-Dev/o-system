@@ -32,6 +32,18 @@ const systemSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    updateStart: (state) => {
+      (state.loading = true), (state.error = null);
+    },
+    updateSuccess: (state, action) => {
+      state.systemDetails = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    updateError: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 
@@ -41,5 +53,8 @@ export const {
   createError,
   getSystemSuccess,
   getSystemFailure,
+  updateStart,
+  updateSuccess,
+  updateError,
 } = systemSlice.actions;
 export default systemSlice.reducer;

@@ -53,28 +53,41 @@ export const getSystem = async (req, res, next) => {
 };
 
 export const removeMember = async (req, res, next) => {
-  const system = await System.findOne({ _id: req.params.systemId });
-  const { userIdToRemove } = req.body;
-  console.log(system);
-  if (!system.admin.includes(req.params.userId)) {
-    return next(errorHandler(403, "You are not allowed to delete any member"));
-  }
-  if (!system.members.includes(userIdToRemove)) {
-    return next(errorHandler(403, "No such person in this System"));
-  }
-  if (system.ownedBy === userIdToRemove) {
-    return next(errorHandler(403, "Cant delete this admin"));
-  }
   try {
-    const removedUser = await System.findByIdAndUpdate(
-      req.params.systemId,
-      {
-        $pull: { members: userIdToRemove },
-        numberOfMembers: numberOfMembers - 1,
-      },
-      { new: true }
-    );
-    res.status(200).json(removedUser);
+    const system = await System.findOne({ _id: req.params.systemId });
+
+    const { userIdToRemove } = req.body;
+    if (!system) {
+      return next(errorHandler(404, "System not found"));
+    }
+    const isAdmin = system.admin.indexOf(req.user.id);
+    if (isAdmin === -1) {
+      return next(
+        errorHandler(403, "You are not allowed to delete any member")
+      );
+    }
+    const member = system.members.indexOf(userIdToRemove);
+
+    if (system.ownedBy === userIdToRemove) {
+      return next(errorHandler(403, "Cant delete this admin"));
+    }
+    // const removedUser = await System.findByIdAndUpdate(
+    //   req.params.systemId,
+    //   {
+    //     $pull: { members: userIdToRemove },
+    //     numberOfMembers: numberOfMembers - 1,
+    //   },
+    //   { new: true }
+    // );
+    //
+    if (member === -1) {
+      return next(errorHandler(403, "No such member in this System"));
+    } else {
+      system.numberOfMembers -= 1;
+      system.members.splice(member, 1);
+    }
+    await system.save();
+    res.status(200).json(system);
   } catch (error) {
     console.log(error);
     next(error);
@@ -82,20 +95,6 @@ export const removeMember = async (req, res, next) => {
 };
 
 export const addMember = async (req, res, next) => {
-  // const { userIdToRemove } = req.body;
-  // console.log(system);
-  // if (!system.admin.includes(req.params.userId)) {
-  //   return next(errorHandler(403, "You are not allowed to add members"));
-  // }
-  // if (!system.members.includes(userIdToRemove)) {
-  //   return next(errorHandler(403, "Member already exist"));
-  // }
-
-  // const addedUser = await System.findByIdAndUpdate(
-  //   req.params.systemId,
-  //   { $push: { members: userIdToRemove } },
-  //   { new: true }
-  // );
   try {
     const system = await System.findById(req.params.systemId);
 
@@ -118,13 +117,47 @@ export const addMember = async (req, res, next) => {
       system.members.push(req.params.userId);
     } else {
       system.numberOfMembers -= 1;
-      system.members.splice(userIndex, 1);
+      system.members.splice(memberIndex, 1);
     }
 
     await system.save();
     res.status(200).json(system);
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const makeAdmin = async (req, res, next) => {
+  try {
+    const system = await System.findById(req.params.systemId);
+    const isAdmin = system.admin.indexOf(req.user.id);
+    const owner = system.ownedBy === req.user.id;
+    const isMemberAdmin = system.admin.indexOf(req.params.userId);
+
+    if (!owner) {
+      return next(errorHandler(403, "You are not allowed to add an admin"));
+    }
+
+    if (!system) {
+      return next(errorHandler(404, "System not found"));
+    }
+
+    if (req.params.userId === system.ownedBy) {
+      // system.admin.push(req.user.id);
+      return next(errorHandler(403, "Owner cannot not be removed"));
+    } else {
+    }
+
+    if (isMemberAdmin === -1) {
+      system.admin.push(req.params.userId);
+    } else {
+      system.admin.splice(isMemberAdmin, 1);
+    }
+
+    await system.save();
+    res.status(200).json(system);
+  } catch (error) {
     next(error);
   }
 };

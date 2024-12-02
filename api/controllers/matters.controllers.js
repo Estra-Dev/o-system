@@ -8,7 +8,10 @@ export const createMatters = async (req, res, next) => {
     const system = await System.findById(req.params.systemId);
 
     const member = await User.findById(req.user.id);
-    if (!system.members.includes(req.user.id)) {
+    if (
+      system.ownedBy !== req.user.id &&
+      !system.members.includes(req.user.id)
+    ) {
       return next(errorHandler(403, "You are not allowed to Publish a matter"));
     }
     if (!req.body.content) {

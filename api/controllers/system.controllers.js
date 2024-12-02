@@ -161,3 +161,39 @@ export const makeAdmin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getSystems = async (req, res, next) => {
+  try {
+    if (!req.user.id) {
+      return next(errorHandler(403, "You can't access systems"));
+    }
+    const systems = await System.find();
+    res.status(200).json(systems);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const joinSystem = async (req, res, next) => {
+  try {
+    const system = await System.findById(req.params.systemId);
+    const memberIndex = system.members.indexOf(req.user.id);
+
+    if (!system) {
+      return next(errorHandler(404, "System not found"));
+    }
+    if (!req.user.id) {
+      return next(errorHandler(403, "User not verified"));
+    }
+
+    if (memberIndex === -1) {
+      system.numberOfJoinRequest += 1;
+      system.joinRequest.push(req.user.id);
+    } else {
+      system.numberOfJoinRequest -= 1;
+      system.joinRequest.splice(memberIndex, 1);
+    }
+  } catch (error) {
+    next(error);
+  }
+};

@@ -45,10 +45,14 @@ const systemSchema = Schema(
       type: Number,
       default: 0,
     },
-    // matters: {
-    //   type: Array,
-    //   default: [],
-    // },
+    joinRequest: {
+      type: Array,
+      default: [],
+    },
+    numberOfJoinRequest: {
+      type: Number,
+      default: 0,
+    },
     category: {
       type: String,
       default: "uncategorize",

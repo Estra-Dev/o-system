@@ -185,7 +185,8 @@ const SystemMatters = () => {
             {systemDetails.description}
           </p>
           <div className="publish w-full text-xs md:text-sm font-semibold p-3 bg-white">
-            {systemDetails.members.includes(currentUser._id) ? (
+            {systemDetails.members.includes(currentUser._id) ||
+            systemDetails.ownedBy === currentUser._id ? (
               <Button
                 disabled={openPost}
                 onClick={() => setOpenPost(true)}

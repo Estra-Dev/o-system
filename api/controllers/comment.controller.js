@@ -4,7 +4,8 @@ import { errorHandler } from "../utils/error.js";
 
 export const createComment = async (req, res, next) => {
   const system = await System.findById(req.params.systemId);
-  const member = system.members.indexOf(req.user.id);
+  const member =
+    system.members.indexOf(req.user.id) || system.ownedBy === req.user.id;
 
   if (!member) {
     return next(

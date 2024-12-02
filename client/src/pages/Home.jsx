@@ -17,12 +17,12 @@ const Home = () => {
                 Create a System
               </button>
             </Link>
-            <Link to={"follow-system"}>
+            <Link to={"/drop-matter"}>
               <button className=" bg-cyan-500 font-extrabold text-[11px] text-white px-2 py-3 rounded-md">
-                Follow a System
+                Drop a Matter
               </button>
             </Link>
-            <Link to={"join-system"}>
+            <Link to={"/join-system"}>
               <button className=" font-extrabold text-[11px] text-white rounded-md px-2 py-3 bg-yellow-300">
                 Join a System
               </button>

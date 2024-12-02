@@ -10,7 +10,7 @@ import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
-router.post("/create/systemId", verifyToken, createComment);
+router.post("/create/:systemId", verifyToken, createComment);
 router.get("/getcomments/:matterId", getComments);
 router.put("/likecomment/:commentId", verifyToken, likeComment);
 router.put("/editcomment/:systemId/:commentId", verifyToken, editComment);

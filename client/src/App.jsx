@@ -8,12 +8,12 @@ import Header from "./components/Header";
 import FooterCom from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import CreateSystem from "./pages/CreateSystem";
-import FollowSystem from "./pages/FollowSystem";
 import JoinSystem from "./pages/JoinSystem";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import System from "./pages/System";
 import UpdateMatter from "./components/UpdateMatter";
 import ScrollToTop from "./components/ScrollToTop";
+import SystemYouBelong from "./pages/SystemYouBelong";
 
 const App = () => {
   return (
@@ -26,14 +26,13 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create-system" element={<CreateSystem />} />
-          <Route path="/follow-system" element={<FollowSystem />} />
+          <Route path="/drop-matter" element={<SystemYouBelong />} />
           <Route path="/system/:slug" element={<System />} />
           <Route path="/system/:slug/:matterId" element={<System />} />
           <Route path="/update-matter/:matterId" element={<UpdateMatter />} />
-        </Route>
-        <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/join-system" element={<JoinSystem />} />
         </Route>
+        <Route element={<OnlyAdminPrivateRoute />}></Route>
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/sign-up" element={<Signup />} />
       </Routes>

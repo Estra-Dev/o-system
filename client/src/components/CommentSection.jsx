@@ -41,9 +41,13 @@ const CommentSection = ({ matterId }) => {
 
   useEffect(() => {
     const getComments = async () => {
-      const res = await axios.get(`/api/comment/getcomments/${matterId}`);
-      if (res.status === 200) {
-        setComments(res.data);
+      try {
+        const res = await axios.get(`/api/comment/getcomments/${matterId}`);
+        if (res.status === 200) {
+          setComments(res.data);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     getComments();
@@ -121,7 +125,8 @@ const CommentSection = ({ matterId }) => {
           <Link to={"/sign-in"}>Sign In</Link>
         </div>
       )}
-      {currentUser && systemDetails.members.includes(currentUser._id) && (
+      {((currentUser && systemDetails.members.includes(currentUser._id)) ||
+        systemDetails.ownedBy === currentUser._id) && (
         <form
           onSubmit={handleSubmit}
           className=" borber border-[1px] border-teal-500 rounded-md p-3"

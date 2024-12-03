@@ -193,6 +193,8 @@ export const joinSystem = async (req, res, next) => {
       system.numberOfJoinRequest -= 1;
       system.joinRequest.splice(memberIndex, 1);
     }
+    await system.save();
+    res.status(200).json(system);
   } catch (error) {
     next(error);
   }

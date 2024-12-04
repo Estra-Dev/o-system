@@ -5,6 +5,7 @@ import SystemMatters from "../components/SystemMatters";
 import SystemMembers from "../components/SystemMembers";
 import SingleMatter from "../components/SingleMatter";
 import AllUsers from "../components/AllUsers";
+import Request from "../components/Request";
 
 const System = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const System = () => {
       {tab === "members" && <SystemMembers />}
       {tab === "thismatter" && <SingleMatter />}
       {tab === "add-people" && <AllUsers />}
+      {tab === "join-request" && <Request />}
     </div>
   );
 };

@@ -32,11 +32,9 @@ const AllUsers = () => {
   };
 
   const handleAdd = async (memberId) => {
-    setModal(false);
     dispatch(updateStart());
     try {
       const res = await axios.put(
-        // `/api/system/addmember/${systemDetails._id}/${memberIdToAdd}`
         `/api/system/addmember/${systemDetails._id}/${memberId}`
       );
       if (res.status === 200) {

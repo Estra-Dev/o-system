@@ -165,9 +165,9 @@ const SystemMembers = () => {
                     </Button>
                   </Table.Cell>
                   <Table.Cell>
-                    {systemDetails &&
-                    systemDetails.admin.includes(member._id) &&
-                    systemDetails.admin.includes(currentUser._id) ? (
+                    {systemDetails.owned === currentUser._id ? (
+                      ""
+                    ) : systemDetails.admin.includes(member._id) ? (
                       <button
                         type="button"
                         className=" font-semibold text-red-500 text-xl"

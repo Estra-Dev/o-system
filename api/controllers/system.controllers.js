@@ -177,7 +177,7 @@ export const getSystems = async (req, res, next) => {
 export const joinSystem = async (req, res, next) => {
   try {
     const system = await System.findById(req.params.systemId);
-    const memberIndex = system.members.indexOf(req.user.id);
+    const memberIndex = system.joinRequest.indexOf(req.user.id);
 
     if (!system) {
       return next(errorHandler(404, "System not found"));
@@ -192,6 +192,35 @@ export const joinSystem = async (req, res, next) => {
     } else {
       system.numberOfJoinRequest -= 1;
       system.joinRequest.splice(memberIndex, 1);
+    }
+    await system.save();
+    res.status(200).json(system);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const admit = async (req, res, next) => {
+  try {
+    const system = await System.findById(req.params.systemId);
+    const userIndex = system.joinRequest.indexOf(req.params.userId);
+    const memberIndex = system.members.indexOf(req.params.userId);
+
+    if (memberIndex === -1) {
+      system.numberOfMembers += 1;
+      system.members.push(req.params.userId);
+    } else {
+      system.numberOfMembers -= 1;
+      system.members.splice(memberIndex, 1);
+    }
+    if (userIndex === -1) {
+      return next(errorHandler(404, "No Such request found"));
+    } else {
+      system.numberOfJoinRequest -= 1;
+      system.joinRequest.splice(userIndex, 1);
+    }
+    if (!system) {
+      return next(errorHandler(404, "System not found"));
     }
     await system.save();
     res.status(200).json(system);

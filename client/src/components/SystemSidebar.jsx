@@ -3,6 +3,8 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { PiNewspaperBold } from "react-icons/pi";
 import { HiOutlineUserGroup } from "react-icons/hi2";
+import { ImAlarm } from "react-icons/im";
+import { GoDotFill } from "react-icons/go";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -135,6 +137,21 @@ const SystemSidebar = () => {
               </Sidebar.Item>
             </Link>
           )}
+          {systemDetails &&
+            systemDetails.admin.includes(currentUser._id) &&
+            systemDetails.joinRequest.length > 0 && (
+              <Link to={`/system/${systemDetails.slug}?tab=join-request`}>
+                <Sidebar.Item as="div">
+                  <div className=" flex flex-col justify-center items-center text-xs font-semibold relative">
+                    <p className=" absolute bottom-9 font-bold text-lg text-red-600">
+                      <GoDotFill color="red" />
+                    </p>
+                    <ImAlarm className=" w-7 h-7 mb-1" />
+                    Request
+                  </div>
+                </Sidebar.Item>
+              </Link>
+            )}
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

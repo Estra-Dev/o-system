@@ -14,6 +14,7 @@ const JoinSystem = () => {
   const [btn, setBtn] = useState(false);
 
   const { currentUser } = useSelector((state) => state.user);
+  const { systemDetails } = useSelector((state) => state.system);
   const dispatch = useDispatch();
 
   const system = async () => {
@@ -33,19 +34,20 @@ const JoinSystem = () => {
   // }
 
   const joinSystem = async (systemId) => {
-    dispatch(updateStart());
+    // dispatch(updateStart());
     setBtn(true);
     try {
       const res = await axios.put(
         `/api/system/joinsystem/${systemId}/${currentUser._id}`
       );
       if (res.status === 200) {
-        dispatch(updateSuccess(res.data));
+        // dispatch(updateSuccess(res.data));
+        setSystems((prev) => prev.filter((system) => system._id !== systemId));
         console.log("Joined", res.data);
         setBtn(false);
       }
     } catch (error) {
-      dispatch(updateError(error.response.data.message));
+      // dispatch(updateError(error.response.data.message));
       console.log(error);
     }
   };
@@ -56,14 +58,17 @@ const JoinSystem = () => {
 
   return (
     <div className=" max-w-4xl w-full mx-auto my-5 min-h-screen flex flex-col items-center">
-      <TextInput placeholder="Search..." />
-      <div className="">
-        <h1>Join a Known System.</h1>
+      <div className=" max-w-2xl w-full px-6 py-4">
+        <TextInput placeholder="Search..." className=" w-full my-3" />
+        <h1 className=" text-2xl font-semibold text-blue-500 text-center">
+          Join a Known System.
+        </h1>
       </div>
       <div className=" mt-5 flex flex-col gap-2 px-5 max-w-3xl w-full">
         {systems &&
           systems.map(
             (system) =>
+              systemDetails &&
               !system.joinRequest.includes(currentUser._id) &&
               !system.members.includes(currentUser._id) &&
               system.ownedBy !== currentUser._id && (
@@ -85,15 +90,26 @@ const JoinSystem = () => {
                       {moment(system.createdAt).fromNow()}
                     </pre>
                   </div>
-                  <Button
-                    size={"xs"}
-                    gradientDuoTone={"purpleToBlue"}
-                    outline
-                    onClick={() => joinSystem(system._id)}
-                    disabled={btn}
-                  >
-                    Send Request
-                  </Button>
+                  {system.joinRequest.includes(currentUser._id) ? (
+                    <Button
+                      size={"xs"}
+                      color={"gray"}
+                      onClick={() => joinSystem(system._id)}
+                      disabled={btn}
+                    >
+                      Cancel Request
+                    </Button>
+                  ) : (
+                    <Button
+                      size={"xs"}
+                      gradientDuoTone={"purpleToBlue"}
+                      outline
+                      onClick={() => joinSystem(system._id)}
+                      disabled={btn}
+                    >
+                      Send Request
+                    </Button>
+                  )}
                   {/* { && (
                 
               )} */}

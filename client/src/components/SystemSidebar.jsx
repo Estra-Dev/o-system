@@ -26,11 +26,11 @@ const SystemSidebar = () => {
 
   const getSystem = async () => {
     try {
-      const res = await axios.get(`/api/system/getsystem/${params.slug}`);
-      console.log(res);
+      const res = await axios.get(`/api/system/getsystem?slug=${params.slug}`);
       if (res.status === 200) {
-        setSystemDetail(res.data);
-        dispatch(getSystemSuccess(res.data));
+        console.log("Sweet", res);
+        setSystemDetail(res.data.system);
+        dispatch(getSystemSuccess(res.data.system[0]));
       }
     } catch (error) {
       console.log(error);
@@ -71,7 +71,7 @@ const SystemSidebar = () => {
   useEffect(() => {
     getSystem();
     getUsers();
-  }, [params.slug]);
+  }, []);
   if (systemDetails) {
     if (systemDetails.admin.includes(currentUser._id)) {
       console.log("You are an Admin");

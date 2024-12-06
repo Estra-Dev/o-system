@@ -123,7 +123,7 @@ const SystemMembers = () => {
         <>
           <Table hoverable className=" shadow-md">
             <Table.Head>
-              <Table.HeadCell>Date Joined</Table.HeadCell>
+              <Table.HeadCell>User</Table.HeadCell>
               <Table.HeadCell>Name</Table.HeadCell>
               <Table.HeadCell>Email</Table.HeadCell>
               <Table.HeadCell>Admin</Table.HeadCell>
@@ -134,7 +134,11 @@ const SystemMembers = () => {
               <Table.Body className=" divide-y" key={member._id}>
                 <Table.Row className=" bg-white">
                   <Table.Cell>
-                    {new Date(member.createdAt).toLocaleDateString()}
+                    <img
+                      src={member.profilePicture}
+                      className=" w-10 h-10 rounded-full object-cover blur-sm"
+                      alt=""
+                    />
                   </Table.Cell>
                   <Table.Cell>
                     {member.firstname + " " + member.lastname}

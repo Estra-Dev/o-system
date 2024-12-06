@@ -5,7 +5,7 @@ import {
   admit,
   createSystem,
   getSystem,
-  getSystems,
+  // getSystems,
   joinSystem,
   makeAdmin,
   removeMember,
@@ -14,8 +14,8 @@ import {
 const router = express.Router();
 
 router.post("/createsystem", verifyToken, createSystem);
-router.get("/getsystem/:systemslug", verifyToken, getSystem);
-router.get("/getsystems", verifyToken, getSystems);
+router.get("/getsystem", verifyToken, getSystem);
+// router.get("/getsystems", verifyToken, getSystems);
 router.put("/removemember/:systemId/:userId", verifyToken, removeMember);
 router.put("/addmember/:systemId/:userId", verifyToken, addMember);
 router.put("/makeadmin/:systemId/:userId", verifyToken, makeAdmin);

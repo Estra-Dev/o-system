@@ -37,16 +37,45 @@ export const createSystem = async (req, res, next) => {
 
 export const getSystem = async (req, res, next) => {
   try {
-    const slug = req.params.systemslug;
-    const system = await System.findOne({ slug });
+    // const slug = req.params.systemslug;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 4;
+    const sortDirection = req.query.order === "asc" ? 1 : -1;
 
-    console.log(system, slug);
-    console.log(req.params);
+    const system = await System.find({
+      ...(req.query.slug && { slug: req.query.slug }),
+      ...(req.query.systemId && { _id: req.query.systemId }),
+      ...(req.query.category && { category: req.query.category }),
+      ...(req.query.searchTerm && {
+        $or: [{ name: { $regex: req.query.searchTerm, $options: "i" } }],
+      }),
+    })
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalSystem = await System.countDocuments();
+
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lastMonthSystems = await System.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
 
     if (!system) {
       return next(errorHandler(404, "System not found!"));
     }
-    res.status(200).json(system);
+    res.status(200).json({
+      system,
+      totalSystem,
+      lastMonthSystems,
+    });
+    console.log(system);
   } catch (error) {
     next(error);
   }
@@ -162,17 +191,17 @@ export const makeAdmin = async (req, res, next) => {
   }
 };
 
-export const getSystems = async (req, res, next) => {
-  try {
-    if (!req.user.id) {
-      return next(errorHandler(403, "You can't access systems"));
-    }
-    const systems = await System.find();
-    res.status(200).json(systems);
-  } catch (error) {
-    next(error);
-  }
-};
+// export const getSystems = async (req, res, next) => {
+//   try {
+//     if (!req.user.id) {
+//       return next(errorHandler(403, "You can't access systems"));
+//     }
+//     const systems = await System.find();
+//     res.status(200).json(systems);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const joinSystem = async (req, res, next) => {
   try {

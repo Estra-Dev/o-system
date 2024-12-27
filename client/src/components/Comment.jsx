@@ -14,10 +14,13 @@ const Comment = ({ comment, onLike, onEdit, onDelete }) => {
   const { currentUser } = useSelector((state) => state.user);
   const { systemDetails } = useSelector((state) => state.system);
 
+  console.log("gee", comment);
+
   useEffect(() => {
     const getUser = async () => {
       try {
         const res = await axios.get(`/api/user/getuser/${comment.userId}`);
+        console.log("finder", res.data);
 
         if (res.status === 200) {
           setUser(res.data);
@@ -26,8 +29,12 @@ const Comment = ({ comment, onLike, onEdit, onDelete }) => {
         console.log(error);
       }
     };
-    getUser();
+    if (comment) {
+      getUser();
+    }
   }, [comment]);
+
+  console.log("commented", user);
 
   const handelSave = async () => {
     try {

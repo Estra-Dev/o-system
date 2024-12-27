@@ -121,10 +121,22 @@ export const getUser = async (req, res, next) => {
 export const getUsers = async (req, res, next) => {
   try {
     // const system = await System.findById(req.params.systemId);
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = parseInt(req.query.startIndex) || 1;
+    const limit = parseInt(req.query.limit);
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
-    const users = await User.find()
+    const users = await User.find({
+      ...(req.query.email && { email: req.query.email }),
+      ...(req.query.userId && { _id: req.query.userId }),
+      ...(req.query.name && {
+        $or: [
+          { firstname: { $regex: req.query.name, $options: "i" } },
+          { lastname: { $regex: req.query.name, $options: "i" } },
+        ],
+      }),
+      // ...(req.query.lastname && {
+      //   $or: [],
+      // }),
+    })
       .sort({ createdAt: sortDirection })
       .limit(limit)
       .skip(startIndex);

@@ -24,8 +24,7 @@ const SystemYouBelong = () => {
       if (res.status === 200) {
         setSystems(res.data.system);
         setLoading(false);
-
-        if (systems.length < 4) {
+        if (res.data.system.length < 9) {
           setShowMore(false);
         } else {
           setShowMore(true);
@@ -80,7 +79,6 @@ const SystemYouBelong = () => {
       console.log(error);
     }
   };
-  console.log("more", systems);
 
   useEffect(() => {
     if (systems.length < 1) {
@@ -93,6 +91,14 @@ const SystemYouBelong = () => {
       setSearch(searchTermFromUrl);
     }
   }, [location.search]);
+  // if (systems) {
+  //   if (systems.length < 3) {
+  //     setShowMore(false);
+  //     console.log("more", systems);
+  //   } else {
+  //     setShowMore(true);
+  //   }
+  // }
   return (
     <div className=" max-w-4xl w-full mx-auto my-5 min-h-screen flex flex-col items-center px-4">
       <div className=" flex items-center gap-2 border bg-gray-100 max-w-xl w-full px-3 py-2 rounded-md">

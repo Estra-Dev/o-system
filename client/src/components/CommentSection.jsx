@@ -142,7 +142,12 @@ const CommentSection = ({ matterId }) => {
             <p className=" text-gray-500 text-xs">
               {200 - comment.length} Characters remaining
             </p>
-            <Button outline gradientDuoTone={"purpleToBlue"} type="submit">
+            <Button
+              outline
+              gradientDuoTone={"purpleToBlue"}
+              type="submit"
+              size={"xs"}
+            >
               Drop
             </Button>
           </div>

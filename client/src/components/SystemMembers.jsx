@@ -1,8 +1,8 @@
 import axios from "axios";
-import { Button, Modal, Table } from "flowbite-react";
+import { Button, Modal, Spinner, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FaCircleExclamation, FaRegTrashCan } from "react-icons/fa6";
 import {
@@ -10,6 +10,7 @@ import {
   updateSuccess,
   updateError,
 } from "../redux/system/systemSlice";
+import { LuSearchCode } from "react-icons/lu";
 
 const SystemMembers = () => {
   // const params = useParams();
@@ -21,8 +22,13 @@ const SystemMembers = () => {
   const [showMore, setShowMore] = useState(true);
   const [userIdToRemove, setUserIdToRemove] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [removeError, setRemoveError] = useState(null);
+  // const [removeError, setRemoveError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // const getSystem = async () => {
   //   try {
@@ -42,8 +48,10 @@ const SystemMembers = () => {
       if (res.status === 200) {
         setFetchedMembers(res.data.users);
         // console.log("All users poem", res.data);
-        if (membersCount.length < 10) {
+        if (res.data.users.length < 9) {
           setShowMore(false);
+        } else {
+          setShowMore(true);
         }
       }
     } catch (error) {
@@ -51,13 +59,13 @@ const SystemMembers = () => {
     }
   };
 
-  if (fetchedMembers) {
-    fetchedMembers.map((member) => {
-      if (systemDetails.members.includes(member._id)) {
-        membersCount.push(member);
-      }
-    });
-  }
+  // if (fetchedMembers) {
+  //   fetchedMembers.map((member) => {
+  //     if (systemDetails.members.includes(member._id)) {
+  //       membersCount.push(member);
+  //     }
+  //   });
+  // }
 
   const handleShowMore = async () => {
     const startIndex = membersCount.length;
@@ -67,6 +75,9 @@ const SystemMembers = () => {
       );
       if (res.status === 200) {
         setFetchedMembers((prev) => [...prev, ...res.data.users]);
+        if (res.data.users.length <= 10) {
+          setShowMore(false);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -98,9 +109,16 @@ const SystemMembers = () => {
   // console.log("first fetch", membersCount);
 
   useEffect(() => {
-    getUsers();
+    if (fetchedMembers.length < 1) {
+      getUsers();
+    }
     // getSystem();
-  }, []);
+    const urlParams = new URLSearchParams(location.search);
+    const nameFromUrlParams = urlParams.get("name");
+    if (nameFromUrlParams) {
+      setSearch(nameFromUrlParams);
+    }
+  }, [location.search]);
 
   const handleMakeAdmin = async (userId) => {
     dispatch(updateStart());
@@ -117,9 +135,55 @@ const SystemMembers = () => {
     }
   };
 
+  const searchSystem = async (ev) => {
+    ev.preventDefault();
+    setLoading(true);
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("name", search);
+    const searchQuery = urlParams.toString();
+    navigate(`/system/${systemDetails.slug}?tab=members&&name=${search}`);
+
+    try {
+      const res = await axios.get(`/api/user/getusers?${searchQuery}`);
+      if (res.status === 200) {
+        setLoading(false);
+        setSearch("");
+        setFetchedMembers(res.data.users);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
   return (
     <div className=" table-auto overflow-x-scroll md:mx-auto p-3">
-      {membersCount.length > 0 ? (
+      <div className=" sticky left-0 flex items-center gap-2 border bg-gray-100 max-w-xl w-full px-3 py-2 my-6 rounded-md">
+        <form
+          onSubmit={searchSystem}
+          className=" flex items-center gap-3 w-full"
+        >
+          <input
+            className=" outline-none w-full bg-transparent"
+            placeholder="Search..."
+            value={search}
+            onChange={(ev) => setSearch(ev.target.value)}
+          />
+          <LuSearchCode
+            onClick={searchSystem}
+            className=" w-6 h-6 text-gray-500 cursor-pointer"
+          />
+        </form>
+        {/* <Button type="button">O</Button> */}
+      </div>
+      {loading ? (
+        <div className=" mt-3 flex items-center gap-2 justify-center max-w-xl w-full mx-auto">
+          <Spinner size={"lg"} />
+          <h2 className=" text-xl font-semibold text-blue-500 text-center">
+            Looking for members
+          </h2>
+        </div>
+      ) : fetchedMembers.length > 0 ? (
         <>
           <Table hoverable className=" shadow-md">
             <Table.Head>
@@ -130,68 +194,72 @@ const SystemMembers = () => {
               <Table.HeadCell>Remove </Table.HeadCell>
               <Table.HeadCell>Add as Admin</Table.HeadCell>
             </Table.Head>
-            {membersCount.map((member) => (
-              <Table.Body className=" divide-y" key={member._id}>
-                <Table.Row className=" bg-white">
-                  <Table.Cell>
-                    <img
-                      src={member.profilePicture}
-                      className=" w-10 h-10 rounded-full object-cover blur-sm"
-                      alt=""
-                    />
-                  </Table.Cell>
-                  <Table.Cell>
-                    {member.firstname + " " + member.lastname}
-                  </Table.Cell>
-                  <Table.Cell>{member.email}</Table.Cell>
-                  <Table.Cell>
-                    {systemDetails &&
-                    systemDetails.admin.includes(member._id) ? (
-                      <p className=" bg-lime-500/80 text-white rounded-full text-xs p-2">
-                        Admin
-                      </p>
-                    ) : (
-                      <p> </p>
-                    )}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Button
-                      size={"xs"}
-                      onClick={() => {
-                        setOpenModal(true);
-                        setUserIdToRemove(member._id);
-                      }}
-                      gradientDuoTone={"purpleToPink"}
-                      outline
-                      className=" text-red-600"
-                    >
-                      <IoTrashBinOutline />
-                    </Button>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {systemDetails.owned === currentUser._id ? (
-                      ""
-                    ) : systemDetails.admin.includes(member._id) ? (
-                      <button
-                        type="button"
-                        className=" font-semibold text-red-500 text-xl"
-                        onClick={() => handleMakeAdmin(member._id)}
-                      >
-                        -
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className=" font-semibold text-cyan-500 text-xl"
-                        onClick={() => handleMakeAdmin(member._id)}
-                      >
-                        +
-                      </button>
-                    )}
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            ))}
+            {fetchedMembers.map(
+              (member) =>
+                systemDetails &&
+                systemDetails.members.includes(member._id) && (
+                  <Table.Body className=" divide-y" key={member._id}>
+                    <Table.Row className=" bg-white">
+                      <Table.Cell>
+                        <img
+                          src={member.profilePicture}
+                          className=" w-10 h-10 rounded-full object-cover blur-sm"
+                          alt=""
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        {member.firstname + " " + member.lastname}
+                      </Table.Cell>
+                      <Table.Cell>{member.email}</Table.Cell>
+                      <Table.Cell>
+                        {systemDetails &&
+                        systemDetails.admin.includes(member._id) ? (
+                          <p className=" bg-lime-500/80 text-white rounded-full text-xs p-2">
+                            Admin
+                          </p>
+                        ) : (
+                          <p> </p>
+                        )}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          size={"xs"}
+                          onClick={() => {
+                            setOpenModal(true);
+                            setUserIdToRemove(member._id);
+                          }}
+                          gradientDuoTone={"purpleToPink"}
+                          outline
+                          className=" text-red-600"
+                        >
+                          <IoTrashBinOutline />
+                        </Button>
+                      </Table.Cell>
+                      <Table.Cell>
+                        {systemDetails.owned === currentUser._id ? (
+                          ""
+                        ) : systemDetails.admin.includes(member._id) ? (
+                          <button
+                            type="button"
+                            className=" font-semibold text-red-500 text-xl"
+                            onClick={() => handleMakeAdmin(member._id)}
+                          >
+                            -
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className=" font-semibold text-cyan-500 text-xl"
+                            onClick={() => handleMakeAdmin(member._id)}
+                          >
+                            +
+                          </button>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                )
+            )}
           </Table>
           {showMore && (
             <button
@@ -204,8 +272,9 @@ const SystemMembers = () => {
           )}
         </>
       ) : (
-        <h1>No member yet</h1>
+        <h1>No member found</h1>
       )}
+
       <Modal
         show={openModal}
         onClose={() => setOpenModal(false)}

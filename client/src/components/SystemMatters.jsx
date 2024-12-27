@@ -62,7 +62,7 @@ const SystemMatters = () => {
         <div className=" flex justify-between items-center head-system py-3 pr-2 bg-white rounded-md shadow-md w-full">
           <div className=" pl-[2%]">
             <h1 className=" font-semibold text-3xl flex items-center gap-2 text-gray-700 truncate">
-              {systemDetails.name}{" "}
+              {systemDetails && systemDetails.name}{" "}
               <span>
                 <PiStarLight className=" w-5 h-5 text-yellow-300" />
               </span>

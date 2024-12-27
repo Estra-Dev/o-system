@@ -27,16 +27,17 @@ const JoinSystem = () => {
       console.log("all systems:", res.data);
       if (res.status === 200) {
         setSystems(res.data.system);
-        if (systems.length < 4) {
-          setShowMore(false);
-        } else {
-          setShowMore(true);
-        }
       }
     } catch (error) {
       console.log(error);
     }
+    if (systems.length < 4) {
+      setShowMore(false);
+    } else {
+      setShowMore(true);
+    }
   };
+
   // if (systems.length > 0) {
   //   const rand = systems[Math.floor(Math.random() * systems.length)];
   //   console.log("rand", rand);
@@ -76,7 +77,7 @@ const JoinSystem = () => {
         setSystems(res.data.system);
         setSearch("");
 
-        if (systems.length < 4) {
+        if (res.data.system.length < 2) {
           setShowMore(false);
         } else {
           setShowMore(true);

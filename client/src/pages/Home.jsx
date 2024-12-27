@@ -1,6 +1,7 @@
 import { Button } from "flowbite-react";
 // import Matter from "../components/Matter";
 import { Link } from "react-router-dom";
+import Updates from "../components/Updates";
 
 const Home = () => {
   return (
@@ -35,6 +36,7 @@ const Home = () => {
             {/* <Matter />
             <Matter />
             <Matter /> */}
+            <Updates />
           </div>
         </div>
 

@@ -8,6 +8,7 @@ import mattersRouter from "./routes/matters.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import updatesRouter from "./routes/updates.routes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ mongoose
   })
   .catch((err) => console.log(err));
 
+const __dirname = path.resolve();
 // App configs
 const app = express();
 const PORT = 3000 || process.env.PORT;
@@ -36,6 +38,13 @@ app.use("/api/system", systemRouter);
 app.use("/api/matter", mattersRouter);
 app.use("/api/comment", commentRouter);
 app.use("/api/updates", updatesRouter);
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";

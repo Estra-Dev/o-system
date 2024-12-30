@@ -62,6 +62,14 @@ const Updates = () => {
     }
   };
 
+  const handleEdit = async (update, editedUpdate) => {
+    setNewUpdates(
+      newUpdates.map((u) =>
+        u._id === update._id ? { ...u, content: editedUpdate } : u
+      )
+    );
+  };
+
   return (
     <div className=" max-w-sm mx-auto p-5">
       {currentUser.isAdmin && (
@@ -95,6 +103,7 @@ const Updates = () => {
               key={newUpdate._id}
               update={newUpdate}
               onDelete={handleDelete}
+              onEdit={handleEdit}
             />
           </div>
         ))}

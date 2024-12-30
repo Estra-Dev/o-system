@@ -32,7 +32,7 @@ export const deleteUpdate = async (req, res, next) => {
     const update = await Updates.findById(req.params.updateId);
 
     if (!update) {
-      return next(errorHandler(403, "Update does not exist"));
+      return next(errorHandler(404, "Update does not exist"));
     }
     if (!req.user.isAdmin) {
       return next(errorHandler(403, "You are allowed to delete this update"));
@@ -40,6 +40,28 @@ export const deleteUpdate = async (req, res, next) => {
 
     await Updates.findByIdAndDelete(req.params.updateId);
     res.status(200).json("Update Deleted");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const editUpdate = async (req, res, next) => {
+  const update = await Updates.findById(req.params.updateId);
+
+  if (!update) {
+    return next(errorHandler(404, "Update does not exist"));
+  }
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "You are allowed to edit this update"));
+  }
+
+  try {
+    const editedUpdate = await Updates.findByIdAndUpdate(
+      req.params.updateId,
+      { content: req.body.updates },
+      { new: true }
+    );
+    res.status(200).json(editedUpdate);
   } catch (error) {
     next(error);
   }

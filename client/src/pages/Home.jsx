@@ -10,7 +10,7 @@ const Home = () => {
     <div className=" min-h-screen mt-5">
       <div className=" w-full max-w-3xl lg:max-w-[1500px] mx-auto flex flex-col md:flex-row gap-4 justify-center">
         <div className=" max-w-[25%] w-full hidden p-5 md:block">
-          <h2 className=" text-center font-semibold text-2xl text-gray-700">
+          <h2 className=" text-center font-semibold text-lg text-gray-700">
             Systems You may like to Join
           </h2>
           <JoinSystem />
@@ -38,15 +38,12 @@ const Home = () => {
             <h1 className=" text-3xl font-bold text-gray-700 mt-7 mb-4 pl-9">
               Updates
             </h1>
-            {/* <Matter />
-            <Matter />
-            <Matter /> */}
             <Updates />
           </div>
         </div>
 
         <div className="w-full max-w-[25%] hidden lg:block p-5">
-          <h2 className=" text-center font-semibold text-2xl text-gray-700">
+          <h2 className=" text-center font-semibold text-lg text-gray-700">
             Systems You Belong
           </h2>
           <SystemYouBelong />

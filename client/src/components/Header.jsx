@@ -97,6 +97,20 @@ const Header = () => {
         <Navbar.Link as={"div"} active={path === "/"}>
           <Link to={"/"}>HOME</Link>
         </Navbar.Link>
+        <Navbar.Link
+          className=" md:hidden"
+          as={"div"}
+          active={path === "/about"}
+        >
+          <Link to={"/join-system"}>SYSTEM TO JOIN</Link>
+        </Navbar.Link>
+        <Navbar.Link
+          className=" md:hidden"
+          as={"div"}
+          active={path === "/about"}
+        >
+          <Link to={"/drop-matter"}>SYSTEM YOU BELONG</Link>
+        </Navbar.Link>
         <Navbar.Link as={"div"} active={path === "/about"}>
           <Link to={"/about"}>ABOUT</Link>
         </Navbar.Link>

@@ -11,18 +11,18 @@ import {
 const Request = () => {
   const dispatch = useDispatch();
   const { systemDetails } = useSelector((state) => state.system);
-  const [requested, setRequested] = useState([]);
+  const [requested, setRequested] = useState(null);
   const [btn, setBtn] = useState(false);
 
-  console.log("req", requested);
   const getRequest = async () => {
     try {
       const res = await axios.get(`/api/user/getusers`);
+      console.log("whoo", res.data);
       if (res.status === 200) {
         setRequested(res.data.users);
-        setRequested((prev) =>
-          prev.filter((req) => systemDetails.joinRequest.includes(req._id))
-        );
+        // setRequested((prev) =>
+        //   prev.filter((req) => systemDetails.joinRequest.includes(req._id))
+        // );
       }
     } catch (error) {
       console.log(error);
@@ -32,6 +32,8 @@ const Request = () => {
   useEffect(() => {
     getRequest();
   }, []);
+
+  console.log("req", requested);
 
   const admit = async (userId) => {
     dispatch(updateStart());

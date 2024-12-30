@@ -31,7 +31,7 @@ const Home = () => {
           </div>
           <div className="  mt-5 rounded-md border-t-2">
             <h1 className=" text-3xl font-bold text-gray-900 my-7 px-5">
-              Matters
+              Updates
             </h1>
             {/* <Matter />
             <Matter />

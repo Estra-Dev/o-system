@@ -20,7 +20,7 @@ export const create = async (req, res, next) => {
 
 export const getUpdates = async (req, res, next) => {
   try {
-    const updates = await Updates.find().sort({ createdAt: 1 });
+    const updates = await Updates.find().sort({ createdAt: -1 });
     res.status(200).json(updates);
   } catch (error) {
     next(error);

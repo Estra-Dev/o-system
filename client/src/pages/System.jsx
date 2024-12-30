@@ -22,16 +22,18 @@ const System = () => {
   }, [location.search]);
 
   return (
-    <div className=" min-h-screen flex relative max-w-5xl w-full">
+    <div className=" min-h-screen flex relative w-full ">
       <div className=" w-[15%] md:w-[100px]">
         {/* Sidebar */}
         <SystemSidebar />
       </div>
-      {tab === "matters" && <SystemMatters />}
-      {tab === "members" && <SystemMembers />}
-      {tab === "thismatter" && <SingleMatter />}
-      {tab === "add-people" && <AllUsers />}
-      {tab === "join-request" && <Request />}
+      <div className=" w-[85%] md:w-[100%]">
+        {tab === "matters" && <SystemMatters />}
+        {tab === "members" && <SystemMembers />}
+        {tab === "thismatter" && <SingleMatter />}
+        {tab === "add-people" && <AllUsers />}
+        {tab === "join-request" && <Request />}
+      </div>
     </div>
   );
 };

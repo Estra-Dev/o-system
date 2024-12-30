@@ -71,7 +71,7 @@ const Updates = () => {
   };
 
   return (
-    <div className=" max-w-sm mx-auto p-5">
+    <div className=" max-w-sm md:max-w-xl rounded-md bg-gray-100/55 mx-auto p-5">
       {currentUser.isAdmin && (
         <form className=" w-full mb-7" onSubmit={handleSubmit}>
           <div className=" w-full flex gap-3 items-end">

@@ -44,7 +44,7 @@ const Header = () => {
         </Button>
         system
       </Link>
-      <form>
+      {/* <form>
         <TextInput
           type="text"
           placeholder="search...."
@@ -55,7 +55,7 @@ const Header = () => {
       </form>
       <Button className=" w-12 h-10 lg:hidden" pill color={"gray"}>
         <LuSearchCode />
-      </Button>
+      </Button> */}
       <div className=" flex gap-2 md:order-2">
         <Button className=" w-12 h-10 hidden sm:inline" color={"gray"} pill>
           <FaRegMoon />
